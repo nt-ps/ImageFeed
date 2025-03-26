@@ -2,8 +2,11 @@ import UIKit
 
 final class ImagesListCell: UITableViewCell {
     
+    @IBOutlet private weak var containerView: UIView!
     @IBOutlet private weak var dateView: UIView!
-    @IBOutlet private weak var dateLabel: UILabel!
+    
+    @IBOutlet weak var posterImageView: UIImageView!
+    @IBOutlet weak var dateLabel: UILabel!
     
     @IBOutlet private weak var likeButton: UIButton!
     
@@ -11,15 +14,28 @@ final class ImagesListCell: UITableViewCell {
     
     private let gradientLayer = CAGradientLayer()
     
+    private var likeValue: Bool = false
+    public var like: Bool {
+        get { likeValue }
+        set {
+            likeValue = newValue
+            likeButton.setImage(
+                UIImage(imageLiteralResourceName: likeValue ? "LikeButton/Active" : "LikeButton/NoActive"),
+                for: .normal)
+        }
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
         // Фон ячейки
-        self.backgroundColor = .clear
+        backgroundColor = .clear
          
         // Скругление.
-        self.layer.cornerRadius = 16
-        self.layer.masksToBounds = true
+        // Контейнер введен для того, чтобы содержимое ячейки обрезалось с учетом скруглений,
+        // при этом отступы между ячейками были сохранены.
+        containerView.layer.masksToBounds = true
+        containerView.layer.cornerRadius = 16
          
         // Установка шрифтов.
         dateLabel.font = UIFont(name: "YandexSansDisplay-Regular", size: 13) ?? nil
