@@ -2,16 +2,22 @@ import UIKit
 
 final class ImagesListViewController: UIViewController {
     
+    // MARK: - IB Outlets
+    
     @IBOutlet private var tableView: UITableView!
+    
+    // MARK: - Private Properties
     
     private let photosName: [String] = Array(0..<20).map{ "\($0)" }
 
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
+        formatter.dateFormat = "dd MMMM yyyy"
+        formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     } ()
+    
+    // MARK: - Overrides Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,6 +26,8 @@ final class ImagesListViewController: UIViewController {
     }
 
 }
+
+// MARK: - Data Source Extension
 
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -34,6 +42,7 @@ extension ImagesListViewController: UITableViewDataSource {
         }
         
         configCell(for: imageListCell, with: indexPath)
+        
         return imageListCell
     }
 }
@@ -41,13 +50,14 @@ extension ImagesListViewController: UITableViewDataSource {
 extension ImagesListViewController {
     private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         guard let image = UIImage(named: "MockData/\(indexPath.row)") else { return }
-        let date: String = dateFormatter.string(from: Date.now)
         
-        cell.posterImageView.image = image
-        cell.dateLabel.text = date
-        cell.like = indexPath.row % 2 == 0
+        cell.cellImage.image = image
+        cell.dateLabel.text = dateFormatter.string(from: Date())
+        cell.isLiked = indexPath.row % 2 == 0
     }
 }
+
+// MARK: - Delegate Extension
 
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }

@@ -47,8 +47,8 @@
                                                             <rect key="frame" x="0.0" y="162" width="361" height="30"/>
                                                             <subviews>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="27 августа 2022" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Eo-UK-o0h">
-                                                                    <rect key="frame" x="8" y="6" width="97" height="16"/>
-                                                                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
+                                                                    <rect key="frame" x="8" y="6" width="101.66666666666667" height="16"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
@@ -84,11 +84,11 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="cellImage" destination="Nry-uh-OMP" id="6k6-Zh-BCI"/>
                                             <outlet property="containerView" destination="lDV-aw-ScB" id="4EJ-L2-MkY"/>
                                             <outlet property="dateLabel" destination="1Eo-UK-o0h" id="PNE-kV-hiK"/>
                                             <outlet property="dateView" destination="qbg-ey-0YH" id="Hcf-cD-5La"/>
                                             <outlet property="likeButton" destination="bE1-RE-RUi" id="liy-qe-1AY"/>
-                                            <outlet property="posterImageView" destination="Nry-uh-OMP" id="J26-Os-KHW"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>

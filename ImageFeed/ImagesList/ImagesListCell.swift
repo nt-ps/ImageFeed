@@ -2,28 +2,34 @@ import UIKit
 
 final class ImagesListCell: UITableViewCell {
     
-    @IBOutlet private weak var containerView: UIView!
-    @IBOutlet private weak var dateView: UIView!
+    // MARK: - IB Outlets
     
-    @IBOutlet weak var posterImageView: UIImageView!
+    @IBOutlet weak var cellImage: UIImageView!
     @IBOutlet weak var dateLabel: UILabel!
     
+    @IBOutlet private weak var containerView: UIView!
     @IBOutlet private weak var likeButton: UIButton!
+    @IBOutlet private weak var dateView: UIView!
+    
+    // MARK: - Public Properties
     
     static let reuseIdentifier = "ImagesListCell"
     
-    private let gradientLayer = CAGradientLayer()
-    
-    private var likeValue: Bool = false
-    public var like: Bool {
+    public var isLiked: Bool {
         get { likeValue }
         set {
             likeValue = newValue
-            likeButton.setImage(
-                UIImage(imageLiteralResourceName: likeValue ? "LikeButton/Active" : "LikeButton/NoActive"),
-                for: .normal)
+            let likeImage = UIImage(imageLiteralResourceName: likeValue ? "LikeButton/Active" : "LikeButton/NoActive")
+            likeButton.setImage(likeImage, for: .normal)
         }
     }
+    
+    // MARK: - Private Properties
+    
+    private var likeValue: Bool = false
+    private let gradientLayer = CAGradientLayer()
+    
+    // MARK: - Overrides Methods
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -37,13 +43,9 @@ final class ImagesListCell: UITableViewCell {
         containerView.layer.masksToBounds = true
         containerView.layer.cornerRadius = 16
          
-        // Установка шрифтов.
-        dateLabel.font = UIFont(name: "YandexSansDisplay-Regular", size: 13) ?? nil
-         
         // Установка градиента.
-        gradientLayer.locations = [0.0, 1.0]
         gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.0)
-        gradientLayer.endPoint = CGPoint(x: 0.0, y: 2.0)
+        gradientLayer.endPoint = CGPoint(x: 0.0, y: 3.0)
         gradientLayer.colors = [UIColor.clear.cgColor, UIColor.ypBlack.cgColor]
         dateView.layer.insertSublayer(gradientLayer, at: 0)
          
