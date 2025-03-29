@@ -27,7 +27,6 @@ final class ImagesListCell: UITableViewCell {
     // MARK: - Private Properties
     
     private var likeValue: Bool = false
-    private let gradientLayer = CAGradientLayer()
     
     // MARK: - Overrides Methods
     
@@ -43,24 +42,10 @@ final class ImagesListCell: UITableViewCell {
         containerView.layer.masksToBounds = true
         containerView.layer.cornerRadius = 16
          
-        // Установка градиента.
-        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.0)
-        gradientLayer.endPoint = CGPoint(x: 0.0, y: 3.0)
-        gradientLayer.colors = [UIColor.clear.cgColor, UIColor.ypBlack.cgColor]
-        dateView.layer.insertSublayer(gradientLayer, at: 0)
-         
         // Установка тени.
         likeButton.layer.shadowColor = UIColor.ypBlack.cgColor
         likeButton.layer.shadowOpacity = 0.1
         likeButton.layer.shadowRadius = 4
         likeButton.layer.shadowOffset = CGSize(width: 0, height: 1)
-    }
-
-    override func layoutIfNeeded() {
-        super.layoutIfNeeded()
-        
-        // Обновление размера градиента (сделано так, потому что
-        // градиент не хотел прилегать к правой границе View).
-        gradientLayer.frame = dateView.bounds
     }
 }

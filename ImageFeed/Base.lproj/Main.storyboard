@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -21,7 +22,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                                 <color key="backgroundColor" name="YP Black"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ImagesListCell" rowHeight="200" id="fni-gF-vS0" customClass="ImagesListCell" customModule="ImageFeed" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ImagesListCell" rowHeight="200" id="fni-gF-vS0" customClass="ImagesListCell" customModule="ImageFeed" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="393" height="200"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFill" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="fni-gF-vS0" id="FtA-44-t2B">
@@ -43,36 +44,34 @@
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" image="LikeButton/NoActive"/>
                                                         </button>
-                                                        <view contentMode="scaleAspectFill" translatesAutoresizingMaskIntoConstraints="NO" id="qbg-ey-0YH">
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Gradient" translatesAutoresizingMaskIntoConstraints="NO" id="L9Q-GB-mid">
                                                             <rect key="frame" x="0.0" y="162" width="361" height="30"/>
-                                                            <subviews>
-                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="27 августа 2022" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Eo-UK-o0h">
-                                                                    <rect key="frame" x="8" y="6" width="101.66666666666667" height="16"/>
-                                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                                                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                                    <nil key="highlightedColor"/>
-                                                                </label>
-                                                            </subviews>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="30" id="Q0k-Ce-qaa"/>
-                                                                <constraint firstItem="1Eo-UK-o0h" firstAttribute="leading" secondItem="qbg-ey-0YH" secondAttribute="leading" constant="8" id="ics-CC-Wrh"/>
-                                                                <constraint firstAttribute="bottom" secondItem="1Eo-UK-o0h" secondAttribute="bottom" constant="8" id="kK6-y7-qkE"/>
-                                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="1Eo-UK-o0h" secondAttribute="trailing" constant="8" id="tq2-hj-wRg"/>
+                                                                <constraint firstAttribute="height" constant="30" id="2fh-9T-EYI"/>
                                                             </constraints>
-                                                        </view>
+                                                        </imageView>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="27 августа 2022" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Eo-UK-o0h">
+                                                            <rect key="frame" x="8" y="168" width="101.66666666666667" height="16"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
                                                     </subviews>
                                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     <constraints>
                                                         <constraint firstItem="bE1-RE-RUi" firstAttribute="top" secondItem="lDV-aw-ScB" secondAttribute="top" id="6Sc-Zn-nPY"/>
                                                         <constraint firstItem="bE1-RE-RUi" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lDV-aw-ScB" secondAttribute="leading" id="7i9-Ml-efm"/>
                                                         <constraint firstAttribute="trailing" secondItem="bE1-RE-RUi" secondAttribute="trailing" id="8ZH-uy-xBc"/>
+                                                        <constraint firstItem="Nry-uh-OMP" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="1Eo-UK-o0h" secondAttribute="trailing" constant="8" id="CGz-Og-cEx"/>
                                                         <constraint firstItem="Nry-uh-OMP" firstAttribute="leading" secondItem="lDV-aw-ScB" secondAttribute="leading" id="CPK-Ti-QHG"/>
                                                         <constraint firstAttribute="bottom" secondItem="Nry-uh-OMP" secondAttribute="bottom" id="Ltz-rc-7E9"/>
+                                                        <constraint firstItem="Nry-uh-OMP" firstAttribute="trailing" secondItem="L9Q-GB-mid" secondAttribute="trailing" id="LuN-ym-805"/>
                                                         <constraint firstItem="Nry-uh-OMP" firstAttribute="top" secondItem="lDV-aw-ScB" secondAttribute="top" id="Mkk-FI-thb"/>
-                                                        <constraint firstAttribute="bottom" secondItem="qbg-ey-0YH" secondAttribute="bottom" id="bAk-LE-6zD"/>
-                                                        <constraint firstAttribute="trailing" secondItem="qbg-ey-0YH" secondAttribute="trailing" id="gwA-cX-gPR"/>
+                                                        <constraint firstItem="Nry-uh-OMP" firstAttribute="bottom" secondItem="1Eo-UK-o0h" secondAttribute="bottom" constant="8" id="SXh-Ul-2Jg"/>
+                                                        <constraint firstItem="L9Q-GB-mid" firstAttribute="leading" secondItem="Nry-uh-OMP" secondAttribute="leading" id="gua-L4-Ctc"/>
                                                         <constraint firstAttribute="trailing" secondItem="Nry-uh-OMP" secondAttribute="trailing" id="hG8-n0-s6n"/>
-                                                        <constraint firstItem="qbg-ey-0YH" firstAttribute="leading" secondItem="lDV-aw-ScB" secondAttribute="leading" id="uE0-ha-H5S"/>
+                                                        <constraint firstItem="1Eo-UK-o0h" firstAttribute="leading" secondItem="Nry-uh-OMP" secondAttribute="leading" constant="8" id="mfi-rG-7q9"/>
+                                                        <constraint firstItem="Nry-uh-OMP" firstAttribute="bottom" secondItem="L9Q-GB-mid" secondAttribute="bottom" id="zxn-Gz-9ag"/>
                                                     </constraints>
                                                 </view>
                                             </subviews>
@@ -87,7 +86,6 @@
                                             <outlet property="cellImage" destination="Nry-uh-OMP" id="6k6-Zh-BCI"/>
                                             <outlet property="containerView" destination="lDV-aw-ScB" id="4EJ-L2-MkY"/>
                                             <outlet property="dateLabel" destination="1Eo-UK-o0h" id="PNE-kV-hiK"/>
-                                            <outlet property="dateView" destination="qbg-ey-0YH" id="Hcf-cD-5La"/>
                                             <outlet property="likeButton" destination="bE1-RE-RUi" id="liy-qe-1AY"/>
                                         </connections>
                                     </tableViewCell>
@@ -117,6 +115,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="Gradient" width="343" height="30"/>
         <image name="LikeButton/NoActive" width="30" height="27.333333969116211"/>
         <namedColor name="YP Black">
             <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
