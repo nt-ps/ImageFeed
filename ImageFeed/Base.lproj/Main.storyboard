@@ -1,24 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--ImageList-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="ImageList" id="BYZ-38-t0r" customClass="ImagesListViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="whl-zy-Y68">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                                <color key="backgroundColor" name="YP Black"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="ImagesListCell" rowHeight="200" id="fni-gF-vS0" customClass="ImagesListCell" customModule="ImageFeed" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="50" width="393" height="200"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFill" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="fni-gF-vS0" id="FtA-44-t2B">
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="200"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lDV-aw-ScB">
+                                                    <rect key="frame" x="16" y="4" width="361" height="192"/>
+                                                    <subviews>
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Nry-uh-OMP">
+                                                            <rect key="frame" x="0.0" y="0.0" width="361" height="192"/>
+                                                        </imageView>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bE1-RE-RUi">
+                                                            <rect key="frame" x="317" y="0.0" width="44" height="44"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="44" id="FO1-Hv-8Gk"/>
+                                                                <constraint firstAttribute="height" constant="44" id="XCR-6y-OIW"/>
+                                                            </constraints>
+                                                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                            <state key="normal" image="LikeButton/NoActive"/>
+                                                        </button>
+                                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Gradient" translatesAutoresizingMaskIntoConstraints="NO" id="L9Q-GB-mid">
+                                                            <rect key="frame" x="0.0" y="162" width="361" height="30"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="30" id="2fh-9T-EYI"/>
+                                                            </constraints>
+                                                        </imageView>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="27 августа 2022" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Eo-UK-o0h">
+                                                            <rect key="frame" x="8" y="168" width="101.66666666666667" height="16"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                    <constraints>
+                                                        <constraint firstItem="bE1-RE-RUi" firstAttribute="top" secondItem="lDV-aw-ScB" secondAttribute="top" id="6Sc-Zn-nPY"/>
+                                                        <constraint firstItem="bE1-RE-RUi" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lDV-aw-ScB" secondAttribute="leading" id="7i9-Ml-efm"/>
+                                                        <constraint firstAttribute="trailing" secondItem="bE1-RE-RUi" secondAttribute="trailing" id="8ZH-uy-xBc"/>
+                                                        <constraint firstItem="Nry-uh-OMP" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="1Eo-UK-o0h" secondAttribute="trailing" constant="8" id="CGz-Og-cEx"/>
+                                                        <constraint firstItem="Nry-uh-OMP" firstAttribute="leading" secondItem="lDV-aw-ScB" secondAttribute="leading" id="CPK-Ti-QHG"/>
+                                                        <constraint firstAttribute="bottom" secondItem="Nry-uh-OMP" secondAttribute="bottom" id="Ltz-rc-7E9"/>
+                                                        <constraint firstItem="Nry-uh-OMP" firstAttribute="trailing" secondItem="L9Q-GB-mid" secondAttribute="trailing" id="LuN-ym-805"/>
+                                                        <constraint firstItem="Nry-uh-OMP" firstAttribute="top" secondItem="lDV-aw-ScB" secondAttribute="top" id="Mkk-FI-thb"/>
+                                                        <constraint firstItem="Nry-uh-OMP" firstAttribute="bottom" secondItem="1Eo-UK-o0h" secondAttribute="bottom" constant="8" id="SXh-Ul-2Jg"/>
+                                                        <constraint firstItem="L9Q-GB-mid" firstAttribute="leading" secondItem="Nry-uh-OMP" secondAttribute="leading" id="gua-L4-Ctc"/>
+                                                        <constraint firstAttribute="trailing" secondItem="Nry-uh-OMP" secondAttribute="trailing" id="hG8-n0-s6n"/>
+                                                        <constraint firstItem="1Eo-UK-o0h" firstAttribute="leading" secondItem="Nry-uh-OMP" secondAttribute="leading" constant="8" id="mfi-rG-7q9"/>
+                                                        <constraint firstItem="Nry-uh-OMP" firstAttribute="bottom" secondItem="L9Q-GB-mid" secondAttribute="bottom" id="zxn-Gz-9ag"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="lDV-aw-ScB" firstAttribute="top" secondItem="FtA-44-t2B" secondAttribute="top" constant="4" id="7lf-ij-uTC"/>
+                                                <constraint firstAttribute="trailing" secondItem="lDV-aw-ScB" secondAttribute="trailing" constant="16" id="baP-LE-3Eb"/>
+                                                <constraint firstItem="lDV-aw-ScB" firstAttribute="leading" secondItem="FtA-44-t2B" secondAttribute="leading" constant="16" id="c4k-El-3a6"/>
+                                                <constraint firstAttribute="bottom" secondItem="lDV-aw-ScB" secondAttribute="bottom" constant="4" id="cgb-wH-QJh"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="cellImage" destination="Nry-uh-OMP" id="6k6-Zh-BCI"/>
+                                            <outlet property="containerView" destination="lDV-aw-ScB" id="4EJ-L2-MkY"/>
+                                            <outlet property="dateLabel" destination="1Eo-UK-o0h" id="PNE-kV-hiK"/>
+                                            <outlet property="likeButton" destination="bE1-RE-RUi" id="liy-qe-1AY"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="dME-5w-8Mp"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="KO6-TH-N8U"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" name="YP Black"/>
+                        <constraints>
+                            <constraint firstItem="whl-zy-Y68" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="EEJ-hF-pby"/>
+                            <constraint firstAttribute="trailing" secondItem="whl-zy-Y68" secondAttribute="trailing" id="PjF-AB-0HA"/>
+                            <constraint firstAttribute="bottom" secondItem="whl-zy-Y68" secondAttribute="bottom" id="Rjk-yH-6tf"/>
+                            <constraint firstItem="whl-zy-Y68" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="mRF-Yx-lOg"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="tableView" destination="whl-zy-Y68" id="qi5-4g-f2I"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="101.5267175572519" y="-27.464788732394368"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Gradient" width="343" height="30"/>
+        <image name="LikeButton/NoActive" width="30" height="27.333333969116211"/>
+        <namedColor name="YP Black">
+            <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>
