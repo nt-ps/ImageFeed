@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="hQ0-RH-mta">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="osY-zN-bbv">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -10,6 +10,30 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Tab Bar Controller-->
+        <scene sceneID="qnR-i0-4Qo">
+            <objects>
+                <tabBarController id="osY-zN-bbv" sceneMemberID="viewController">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="P4m-ch-jYC">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="selectedImageTintColor" name="YP White"/>
+                        <tabBarAppearance key="standardAppearance">
+                            <color key="backgroundColor" name="YP Black"/>
+                        </tabBarAppearance>
+                        <tabBarAppearance key="scrollEdgeAppearance">
+                            <color key="backgroundColor" name="YP Black"/>
+                        </tabBarAppearance>
+                    </tabBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="yn3-vW-rO4"/>
+                        <segue destination="hQ0-RH-mta" kind="relationship" relationship="viewControllers" id="xbv-bt-Mka"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MO2-bd-SG9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-981" y="-394"/>
+        </scene>
         <!--ImageList-->
         <scene sceneID="tne-QT-ifu">
             <objects>
@@ -105,6 +129,7 @@
                             <constraint firstItem="whl-zy-Y68" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="mRF-Yx-lOg"/>
                         </constraints>
                     </view>
+                    <tabBarItem key="tabBarItem" title="" image="MainButtonIcon" id="ROt-qd-piw"/>
                     <connections>
                         <outlet property="tableView" destination="whl-zy-Y68" id="qi5-4g-f2I"/>
                     </connections>
@@ -177,6 +202,7 @@
                             <constraint firstItem="5Od-zo-ilX" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Muc-Zq-Uvq" secondAttribute="trailing" constant="16" id="rU0-l9-nkm"/>
                         </constraints>
                     </view>
+                    <tabBarItem key="tabBarItem" title="" image="ProfileButtonIcon" id="Kka-aY-oVN"/>
                     <connections>
                         <outlet property="nicknameLabel" destination="Ic2-KG-Zw2" id="zgF-3d-dSs"/>
                         <outlet property="statusLabel" destination="Muc-Zq-Uvq" id="1pp-fJ-tsN"/>
@@ -193,7 +219,9 @@
         <image name="DarkGradientBackground" width="343" height="30"/>
         <image name="LikeButtonIcon/NoActive" width="30" height="27.333333969116211"/>
         <image name="LogoutButtonIcon" width="20" height="22"/>
+        <image name="MainButtonIcon" width="20" height="22"/>
         <image name="MockUserpick" width="70" height="70"/>
+        <image name="ProfileButtonIcon" width="24" height="24"/>
         <namedColor name="YP Black">
             <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
