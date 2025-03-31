@@ -132,7 +132,7 @@
                     <navigationItem key="navigationItem" id="BW7-HP-zhd"/>
                     <connections>
                         <outlet property="tableView" destination="whl-zy-Y68" id="qi5-4g-f2I"/>
-                        <segue destination="yg8-WB-sL1" kind="show" identifier="ShowSingleImage" id="ABs-Bc-iYu"/>
+                        <segue destination="yg8-WB-sL1" kind="presentation" identifier="ShowSingleImage" id="ABs-Bc-iYu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -142,22 +142,36 @@
         <!--Single Image View Controller-->
         <scene sceneID="qEq-JX-kMw">
             <objects>
-                <viewController id="yg8-WB-sL1" customClass="SingleImageViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController modalPresentationStyle="fullScreen" id="yg8-WB-sL1" customClass="SingleImageViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Nf6-Ek-VEm">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MockData/0" translatesAutoresizingMaskIntoConstraints="NO" id="0Yo-qt-8pL">
-                                <rect key="frame" x="0.0" y="103" width="393" height="666"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MockData/0" translatesAutoresizingMaskIntoConstraints="NO" id="0Yo-qt-8pL">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fPy-kA-vDB">
+                                <rect key="frame" x="9" y="11" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="pg4-Tb-QAh"/>
+                                    <constraint firstAttribute="width" constant="44" id="q8j-g6-uvl"/>
+                                </constraints>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="BackwardButtonIcon"/>
+                                <connections>
+                                    <action selector="didTapBackButton" destination="yg8-WB-sL1" eventType="touchUpInside" id="mN9-0N-pN5"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="UW7-tK-WzS"/>
                         <color key="backgroundColor" name="YP Black"/>
                         <constraints>
-                            <constraint firstItem="0Yo-qt-8pL" firstAttribute="leading" secondItem="UW7-tK-WzS" secondAttribute="leading" id="9or-On-Fft"/>
-                            <constraint firstItem="0Yo-qt-8pL" firstAttribute="top" secondItem="UW7-tK-WzS" secondAttribute="top" id="cb3-Bc-gPj"/>
-                            <constraint firstItem="UW7-tK-WzS" firstAttribute="bottom" secondItem="0Yo-qt-8pL" secondAttribute="bottom" id="djD-Xc-NsN"/>
-                            <constraint firstItem="UW7-tK-WzS" firstAttribute="trailing" secondItem="0Yo-qt-8pL" secondAttribute="trailing" id="u1V-q6-ClJ"/>
+                            <constraint firstItem="0Yo-qt-8pL" firstAttribute="leading" secondItem="Nf6-Ek-VEm" secondAttribute="leading" id="9or-On-Fft"/>
+                            <constraint firstItem="fPy-kA-vDB" firstAttribute="top" secondItem="UW7-tK-WzS" secondAttribute="top" constant="11" id="Ms8-RO-lbb"/>
+                            <constraint firstItem="0Yo-qt-8pL" firstAttribute="top" secondItem="Nf6-Ek-VEm" secondAttribute="top" id="cb3-Bc-gPj"/>
+                            <constraint firstItem="fPy-kA-vDB" firstAttribute="leading" secondItem="UW7-tK-WzS" secondAttribute="leading" constant="9" id="dCG-Rv-Rii"/>
+                            <constraint firstAttribute="bottom" secondItem="0Yo-qt-8pL" secondAttribute="bottom" id="djD-Xc-NsN"/>
+                            <constraint firstAttribute="trailing" secondItem="0Yo-qt-8pL" secondAttribute="trailing" id="u1V-q6-ClJ"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" style="editor" id="xGM-tX-j6H"/>
@@ -275,6 +289,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="BackwardButtonIcon" width="9" height="15.666666984558105"/>
         <image name="DarkGradientBackground" width="343" height="30"/>
         <image name="LikeButtonIcon/NoActive" width="30" height="27.333333969116211"/>
         <image name="LogoutButtonIcon" width="20" height="22"/>

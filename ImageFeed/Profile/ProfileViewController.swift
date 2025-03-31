@@ -22,5 +22,5 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - IB Actions
     
-    @IBAction func logoutButtonTap(_ sender: Any) { }
+    @IBAction private func logoutButtonTap(_ sender: Any) { }
 }
