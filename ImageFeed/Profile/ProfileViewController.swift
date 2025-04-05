@@ -42,7 +42,7 @@ final class ProfileViewController: UIViewController {
     private func addUserpickImageView() {
         let userpickImageView = UIImageView()
         
-        userpickImageView.image = UIImage(imageLiteralResourceName: "MockUserpick")
+        userpickImageView.image = UIImage(imageLiteralResourceName: "MockUserpick")   // Mock-данные
         userpickImageView.contentMode = .scaleAspectFill
         userpickImageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -65,7 +65,7 @@ final class ProfileViewController: UIViewController {
         
         let usernameLabel = UILabel()
         
-        usernameLabel.text = "Екатерина Новикова"
+        usernameLabel.text = "Екатерина Новикова"   // Mock-данные
         usernameLabel.font = UIFont.systemFont(ofSize: 23, weight: .bold)
         usernameLabel.textColor = .ypWhite
         usernameLabel.setCharacterSpacing(0.08)
@@ -87,7 +87,7 @@ final class ProfileViewController: UIViewController {
         
         let nicknameLabel = UILabel()
         
-        nicknameLabel.text = "@ekaterina_nov"
+        nicknameLabel.text = "@ekaterina_nov"   // Mock-данные
         nicknameLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         nicknameLabel.textColor = .ypGray
         nicknameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -108,7 +108,7 @@ final class ProfileViewController: UIViewController {
         
         let statusLabel = UILabel()
         
-        statusLabel.text = "Hello, world!"
+        statusLabel.text = "Hello, world!"   // Mock-данные
         statusLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         statusLabel.textColor = .ypWhite
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
