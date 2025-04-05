@@ -147,7 +147,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" translatesAutoresizingMaskIntoConstraints="NO" id="Tlm-lU-AQi">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" contentInsetAdjustmentBehavior="never" minimumZoomScale="0.0" translatesAutoresizingMaskIntoConstraints="NO" id="Tlm-lU-AQi">
                                 <rect key="frame" x="0.0" y="0.0" width="1640" height="1099"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="MockData/0" translatesAutoresizingMaskIntoConstraints="NO" id="0Yo-qt-8pL">
@@ -162,7 +162,7 @@
                                 </connections>
                             </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fPy-kA-vDB">
-                                <rect key="frame" x="9" y="11" width="44" height="44"/>
+                                <rect key="frame" x="0.0" y="0.0" width="44" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="pg4-Tb-QAh"/>
                                     <constraint firstAttribute="width" constant="44" id="q8j-g6-uvl"/>
@@ -188,10 +188,10 @@
                         <color key="backgroundColor" name="YP Black"/>
                         <constraints>
                             <constraint firstItem="W0a-Ax-89C" firstAttribute="centerX" secondItem="Nf6-Ek-VEm" secondAttribute="centerX" id="MD1-Fe-hr5"/>
-                            <constraint firstItem="fPy-kA-vDB" firstAttribute="top" secondItem="UW7-tK-WzS" secondAttribute="top" constant="11" id="Ms8-RO-lbb"/>
+                            <constraint firstItem="fPy-kA-vDB" firstAttribute="top" secondItem="UW7-tK-WzS" secondAttribute="top" id="Ms8-RO-lbb"/>
                             <constraint firstAttribute="top" secondItem="Tlm-lU-AQi" secondAttribute="top" id="ZBV-rT-QoY"/>
                             <constraint firstItem="Tlm-lU-AQi" firstAttribute="bottom" secondItem="Nf6-Ek-VEm" secondAttribute="bottom" id="aoR-zB-xid"/>
-                            <constraint firstItem="fPy-kA-vDB" firstAttribute="leading" secondItem="UW7-tK-WzS" secondAttribute="leading" constant="9" id="dCG-Rv-Rii"/>
+                            <constraint firstItem="fPy-kA-vDB" firstAttribute="leading" secondItem="UW7-tK-WzS" secondAttribute="leading" id="dCG-Rv-Rii"/>
                             <constraint firstItem="UW7-tK-WzS" firstAttribute="leading" secondItem="Tlm-lU-AQi" secondAttribute="leading" id="p2i-fw-WCY"/>
                             <constraint firstAttribute="bottom" secondItem="W0a-Ax-89C" secondAttribute="bottom" constant="51" id="svX-IL-4pu"/>
                             <constraint firstItem="Tlm-lU-AQi" firstAttribute="trailing" secondItem="UW7-tK-WzS" secondAttribute="trailing" id="ydw-oW-SmM"/>
