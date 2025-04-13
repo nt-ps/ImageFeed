@@ -55,6 +55,7 @@ final class ProfileViewController: UIViewController {
             userpickImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: mainLeadingOffset)
         ])
         
+        userpickImageView.layer.masksToBounds = true
         userpickImageView.layer.cornerRadius = userpickImageView.bounds.width / 2
         
         self.userpickImageView = userpickImageView
