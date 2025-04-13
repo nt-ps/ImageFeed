@@ -9,7 +9,6 @@ final class ImagesListCell: UITableViewCell {
     
     @IBOutlet private weak var containerView: UIView!
     @IBOutlet private weak var likeButton: UIButton!
-    @IBOutlet private weak var dateView: UIView!
     
     // MARK: - Public Properties
     
@@ -19,7 +18,7 @@ final class ImagesListCell: UITableViewCell {
         get { likeValue }
         set {
             likeValue = newValue
-            let likeImage = UIImage(imageLiteralResourceName: likeValue ? "LikeButton/Active" : "LikeButton/NoActive")
+            let likeImage = UIImage(imageLiteralResourceName: likeValue ? "LikeButtonIcon/Active" : "LikeButtonIcon/NoActive")
             likeButton.setImage(likeImage, for: .normal)
         }
     }
@@ -47,5 +46,7 @@ final class ImagesListCell: UITableViewCell {
         likeButton.layer.shadowOpacity = 0.1
         likeButton.layer.shadowRadius = 4
         likeButton.layer.shadowOffset = CGSize(width: 0, height: 1)
+        
+        dateLabel.setCharacterSpacing(0.08)
     }
 }
