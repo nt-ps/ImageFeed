@@ -7,24 +7,50 @@ final class AuthViewController: UIViewController {
     private var logoImageView: UIImageView?
     private var loginButton: UIButton?
     
+    // MARK: - Private Properties
+    
+    private let showWebViewSegueIdentifier = "ShowWebView"
+    
     // MARK: - Overrides Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setView()
-        
+        setBackButton()
         addLogo()
         addLoginButton()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == showWebViewSegueIdentifier {
+            guard let viewController = segue.destination as? WebViewViewController else {
+                assertionFailure("Invalid segue destination")
+                return
+            }
+
+            viewController.delegate = self
+        } else {
+            super.prepare(for: segue, sender: sender)
+        }
     }
     
     // MARK: - Private Methods
     
     @objc
-    private func loginButtonTap() { }
+    private func loginButtonTap() {
+        performSegue(withIdentifier: showWebViewSegueIdentifier, sender: loginButton)
+    }
     
     private func setView() {
         view.backgroundColor = .ypBlack
+    }
+    
+    private func setBackButton() {
+        navigationController?.navigationBar.backIndicatorImage = UIImage(named: "BackwardButtonIcon")
+        navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "BackwardButtonIcon")
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        navigationItem.backBarButtonItem?.tintColor = .ypBlack
     }
     
     private func addLogo() {
@@ -71,5 +97,14 @@ final class AuthViewController: UIViewController {
         ])
         
         self.loginButton = loginButton
+    }
+}
+
+extension AuthViewController: WebViewViewControllerDelegate {
+    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
+    }
+    
+    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
+        vc.dismiss(animated: true)
     }
 }

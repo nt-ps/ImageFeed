@@ -21,10 +21,29 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                     <navigationItem key="navigationItem" id="82C-xr-zQl"/>
+                    <connections>
+                        <segue destination="7q5-lY-cZJ" kind="show" identifier="ShowWebView" id="hbR-Z2-wTJ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ih6-66-7Pv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1035.8208955223879" y="-394.0503432494279"/>
+            <point key="canvasLocation" x="-1018" y="-742"/>
+        </scene>
+        <!--Web View View Controller-->
+        <scene sceneID="OPW-lN-kaP">
+            <objects>
+                <viewController id="7q5-lY-cZJ" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="T4a-8c-kgU">
+                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="uKE-jH-YFz"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="wAw-H3-wqH"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0H2-nr-csX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1019" y="38"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="qnR-i0-4Qo">
