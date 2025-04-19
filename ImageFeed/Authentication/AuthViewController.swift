@@ -10,6 +10,7 @@ final class AuthViewController: UIViewController {
     // MARK: - Private Properties
     
     private let showWebViewSegueIdentifier = "ShowWebView"
+    private let oauth2Service = OAuth2Service.shared
     
     // MARK: - Overrides Methods
     
@@ -102,6 +103,9 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
+        OAuth2Service.shared.fetchOAuthToken(code: code) { result in
+            
+        }
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
