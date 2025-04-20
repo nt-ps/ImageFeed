@@ -7,10 +7,17 @@ final class AuthViewController: UIViewController {
     private var logoImageView: UIImageView?
     private var loginButton: UIButton?
     
+    // MARK: - Segue Identifiers
+
+    private let showWebViewSegueIdentifier = "ShowWebView"
+    
     // MARK: - Private Properties
     
-    private let showWebViewSegueIdentifier = "ShowWebView"
     private let oauth2Service = OAuth2Service.shared
+    
+    // MARK: - Internal Properties
+    
+    weak var delegate: AuthViewControllerDelegate?
     
     // MARK: - Overrides Methods
     
@@ -25,12 +32,11 @@ final class AuthViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showWebViewSegueIdentifier {
-            guard let viewController = segue.destination as? WebViewViewController else {
-                assertionFailure("Invalid segue destination")
-                return
+            guard let webViewViewController = segue.destination as? WebViewViewController else {
+                fatalError("Failed to prepare for \(showWebViewSegueIdentifier)")
             }
 
-            viewController.delegate = self
+            webViewViewController.delegate = self
         } else {
             super.prepare(for: segue, sender: sender)
         }
@@ -103,12 +109,6 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        OAuth2Service.shared.fetchOAuthToken(code: code) { result in
-            
-        }
-    }
-    
-    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-        vc.dismiss(animated: true)
+        delegate?.didAuthenticate(self, withCode: code)
     }
 }

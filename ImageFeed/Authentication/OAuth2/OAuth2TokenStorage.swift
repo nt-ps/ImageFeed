@@ -4,8 +4,8 @@ final class OAuth2TokenStorage {
     
     // MARK: - Internal Properties
     
-    var token: String {
-        get { storage.string(forKey: Keys.accessToken.rawValue) ?? "" }
+    var token: String? {
+        get { storage.string(forKey: Keys.accessToken.rawValue) }
         set { storage.set(newValue, forKey: Keys.accessToken.rawValue) }
     }
     

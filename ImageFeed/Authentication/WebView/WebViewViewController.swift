@@ -8,9 +8,9 @@ final class WebViewViewController: UIViewController {
     private var webView: WKWebView?
     private var progressView: UIProgressView?
     
-    // MARK: - Public Properties
+    // MARK: - Internal Properties
     
-    public var delegate: WebViewViewControllerDelegate?
+    var delegate: WebViewViewControllerDelegate?
     
     // MARK: - Overrides Methods
     
@@ -23,7 +23,6 @@ final class WebViewViewController: UIViewController {
         webView?.navigationDelegate = self
         
         loadAuthView()
-        updateProgress()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -109,6 +108,7 @@ final class WebViewViewController: UIViewController {
         
         let request = URLRequest(url: url)
         webView?.load(request)
+        updateProgress()
     }
     
     private func updateProgress() {
