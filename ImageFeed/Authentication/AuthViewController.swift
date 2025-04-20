@@ -2,6 +2,10 @@ import UIKit
 
 final class AuthViewController: UIViewController {
     
+    // MARK: - Internal Properties
+    
+    weak var delegate: AuthViewControllerDelegate?
+    
     // MARK: - Views
     
     private var logoImageView: UIImageView?
@@ -10,14 +14,6 @@ final class AuthViewController: UIViewController {
     // MARK: - Segue Identifiers
 
     private let showWebViewSegueIdentifier = "ShowWebView"
-    
-    // MARK: - Private Properties
-    
-    private let oauth2Service = OAuth2Service.shared
-    
-    // MARK: - Internal Properties
-    
-    weak var delegate: AuthViewControllerDelegate?
     
     // MARK: - Overrides Methods
     

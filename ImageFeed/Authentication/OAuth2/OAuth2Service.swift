@@ -2,33 +2,28 @@ import Foundation
 
 final class OAuth2Service {
     
+    // MARK: - Static Properties
+    
     static let shared = OAuth2Service()
     
-    private let storage: OAuth2TokenStorage = OAuth2TokenStorage()
+    // MARK: - Private Enumeration
+    
+    private enum OAuth2ServiceError: Error {
+        case invalidURL
+    }
+    
+    // MARK: - Private Properties
+    
+    private let tokenStorage: OAuth2TokenStorage = OAuth2TokenStorage()
+    
+    // MARK: - Initializers
     
     private init() {}
     
-    private func makeOAuthTokenRequest(code: String) -> URLRequest? {
-        guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else { return nil }
-        
-        urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: Constants.accessKey),
-            URLQueryItem(name: "client_secret", value: Constants.secretKey),
-            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
-            URLQueryItem(name: "code", value: code),
-            URLQueryItem(name: "grant_type", value: "authorization_code")
-        ]
-        
-        guard let url = urlComponents.url else { return nil }
-        
-        var request: URLRequest = URLRequest(url: url)
-        request.httpMethod = "POST"
-        return request
-    }
+    // MARK: - Internal Methods
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void) {
         guard let request = makeOAuthTokenRequest(code: code) else {
-            print("Failed to generate OAuth token request.")
             completion(.failure(OAuth2ServiceError.invalidURL))
             return
         }
@@ -38,7 +33,7 @@ final class OAuth2Service {
             case .success(let data):
                 do {
                     let responseBody = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                    self?.storage.token = responseBody.accessToken
+                    self?.tokenStorage.token = responseBody.accessToken
                     completion(.success(responseBody))
                 } catch {
                     print("JSON decoder error: \(error)")
@@ -52,8 +47,30 @@ final class OAuth2Service {
         
         task.resume()
     }
-}
-
-enum OAuth2ServiceError: Error {
-    case invalidURL
+    
+    // MARK: - Private Methods
+    
+    private func makeOAuthTokenRequest(code: String) -> URLRequest? {
+        guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
+            print("Failed to initialize URL components.")
+            return nil
+        }
+        
+        urlComponents.queryItems = [
+            URLQueryItem(name: "client_id", value: Constants.accessKey),
+            URLQueryItem(name: "client_secret", value: Constants.secretKey),
+            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
+            URLQueryItem(name: "code", value: code),
+            URLQueryItem(name: "grant_type", value: "authorization_code")
+        ]
+        
+        guard let url = urlComponents.url else {
+            print("Failed to get URL.")
+            return nil
+        }
+        
+        var request: URLRequest = URLRequest(url: url)
+        request.httpMethod = "POST"
+        return request
+    }
 }

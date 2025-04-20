@@ -3,14 +3,14 @@ import WebKit
 
 final class WebViewViewController: UIViewController {
     
+    // MARK: - Internal Properties
+    
+    var delegate: WebViewViewControllerDelegate?
+    
     // MARK: - Views
     
     private var webView: WKWebView?
     private var progressView: UIProgressView?
-    
-    // MARK: - Internal Properties
-    
-    var delegate: WebViewViewControllerDelegate?
     
     // MARK: - Overrides Methods
     
@@ -95,7 +95,10 @@ final class WebViewViewController: UIViewController {
     }
     
     private func loadAuthView() {
-        guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else { return }
+        guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
+            print("Failed to initialize URL components.")
+            return
+        }
         
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
@@ -104,7 +107,10 @@ final class WebViewViewController: UIViewController {
             URLQueryItem(name: "scope", value: Constants.accessScope)
         ]
         
-        guard let url = urlComponents.url else { return }
+        guard let url = urlComponents.url else {
+            print("Failed to get URL.")
+            return
+        }
         
         let request = URLRequest(url: url)
         webView?.load(request)
