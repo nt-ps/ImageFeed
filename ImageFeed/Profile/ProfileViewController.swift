@@ -42,7 +42,7 @@ final class ProfileViewController: UIViewController {
     private func addUserpickImageView() {
         let userpickImageView = UIImageView()
         
-        userpickImageView.image = UIImage(imageLiteralResourceName: "MockUserpick")   // Mock-данные
+        userpickImageView.image = UIImage(named: "MockUserpick")   // Mock-данные
         userpickImageView.contentMode = .scaleAspectFill
         userpickImageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -146,7 +146,7 @@ final class ProfileViewController: UIViewController {
         
         let logoutButton = UIButton(type: .custom)
         
-        logoutButton.setImage(UIImage(imageLiteralResourceName: "LogoutButtonIcon"), for: .normal)
+        logoutButton.setImage(UIImage(named: "LogoutButtonIcon"), for: .normal)
         logoutButton.addTarget(self, action: #selector(self.logoutButtonTap), for: .touchUpInside)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
         

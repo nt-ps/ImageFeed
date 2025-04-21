@@ -57,9 +57,6 @@
                         <tabBarAppearance key="standardAppearance">
                             <color key="backgroundColor" name="YP Black"/>
                         </tabBarAppearance>
-                        <tabBarAppearance key="scrollEdgeAppearance">
-                            <color key="backgroundColor" name="YP Black"/>
-                        </tabBarAppearance>
                     </tabBar>
                     <connections>
                         <segue destination="BYZ-38-t0r" kind="relationship" relationship="viewControllers" id="cj0-AC-dg7"/>
@@ -237,7 +234,7 @@
                             <constraint firstItem="Tlm-lU-AQi" firstAttribute="trailing" secondItem="UW7-tK-WzS" secondAttribute="trailing" id="ydw-oW-SmM"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" style="editor" id="xGM-tX-j6H"/>
+                    <navigationItem key="navigationItem" id="xGM-tX-j6H"/>
                     <connections>
                         <outlet property="imageView" destination="0Yo-qt-8pL" id="dmO-vJ-Mau"/>
                         <outlet property="scrollView" destination="Tlm-lU-AQi" id="BcA-Gb-hAl"/>

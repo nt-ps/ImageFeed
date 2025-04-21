@@ -20,7 +20,7 @@ final class ImagesListCell: UITableViewCell {
         get { likeValue }
         set {
             likeValue = newValue
-            let likeImage = UIImage(imageLiteralResourceName: likeValue ? "LikeButtonIcon/Active" : "LikeButtonIcon/NoActive")
+            guard let likeImage = UIImage(named: likeValue ? "LikeButtonIcon/Active" : "LikeButtonIcon/NoActive") else { return }
             likeButton.setImage(likeImage, for: .normal)
         }
     }

@@ -28,7 +28,8 @@ final class SplashViewController: UIViewController {
                 let navigationController = segue.destination as? UINavigationController,
                 let authViewController = navigationController.viewControllers[0] as? AuthViewController
             else {
-                fatalError("Failed to prepare for \(showAuthViewSegueIdentifier)")
+                assertionFailure("Failed to prepare for \(showAuthViewSegueIdentifier)")
+                return
             }
 
             authViewController.delegate = self
@@ -40,7 +41,10 @@ final class SplashViewController: UIViewController {
     // MARK: - Private Methods
     
     private func switchToTabBarController() {
-        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration.") }
+        guard let window = UIApplication.shared.windows.first else {
+            assertionFailure("Invalid Configuration.")
+            return
+        }
         let tabBarController = UIStoryboard(name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "TabBarViewController")
         window.rootViewController = tabBarController
@@ -58,6 +62,10 @@ extension SplashViewController: AuthViewControllerDelegate {
                 case .failure:
                     print("Login failed.")
                     // TODO: Показать алерт.
+                    // Было оставлено замечание по поводу этого блока.
+                    // В теории написано, что пока обрабатывать ошибку не обязательно,
+                    // в авторском решение указано, что реализацию будем делать в 11-ом спринте.
+                    // Посмотрю, что будет далее, и потом по необходимости добавлю алерт.
                 }
             }
         }

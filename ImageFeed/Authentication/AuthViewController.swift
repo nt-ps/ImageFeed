@@ -29,7 +29,8 @@ final class AuthViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showWebViewSegueIdentifier {
             guard let webViewViewController = segue.destination as? WebViewViewController else {
-                fatalError("Failed to prepare for \(showWebViewSegueIdentifier)")
+                assertionFailure("Failed to prepare for \(showWebViewSegueIdentifier)")
+                return
             }
 
             webViewViewController.delegate = self
@@ -59,7 +60,7 @@ final class AuthViewController: UIViewController {
     private func addLogo() {
         let logoImageView = UIImageView()
         
-        logoImageView.image = UIImage(imageLiteralResourceName: "UnsplashLogo")
+        logoImageView.image = UIImage(named: "UnsplashLogo")
         logoImageView.contentMode = .scaleAspectFill
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
         
