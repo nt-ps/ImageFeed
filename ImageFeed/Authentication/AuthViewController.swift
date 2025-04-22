@@ -107,5 +107,9 @@ final class AuthViewController: UIViewController {
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         delegate?.didAuthenticate(self, withCode: code)
+        // TODO: OAuth2Service.shared.fetchOAuthToken вывести сюда.
+        // Если успешно, вызвать delegate?.didAuthenticate, где нужно выполнить переход
+        // к ленте через switchToTabBarController.
+        // Если ошибка, то отобразить ошибку в алерте и остаться на экране авторизации.
     }
 }

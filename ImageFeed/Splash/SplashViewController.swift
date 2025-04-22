@@ -55,6 +55,8 @@ extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController, withCode code: String) {
         dismiss(animated: true) { [weak self] in
             guard let self else { return }
+            // TODO: Перенести OAuth2Service.shared.fetchOAuthToken
+            // отсюда в AuthViewController.webViewViewController.
             OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
                 switch result {
                 case .success:
