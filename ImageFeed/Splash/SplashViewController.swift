@@ -53,6 +53,7 @@ final class SplashViewController: UIViewController {
 
 extension SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController, withCode code: String) {
+        /*
         dismiss(animated: true) { [weak self] in
             guard let self else { return }
             // TODO: Перенести OAuth2Service.shared.fetchOAuthToken
@@ -70,6 +71,11 @@ extension SplashViewController: AuthViewControllerDelegate {
                     // Посмотрю, что будет далее, и потом по необходимости добавлю алерт.
                 }
             }
+        }
+         */
+        
+        dismiss(animated: true) { [weak self] in
+            self?.switchToTabBarController()
         }
     }
 }
