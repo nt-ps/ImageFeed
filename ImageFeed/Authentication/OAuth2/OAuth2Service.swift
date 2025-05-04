@@ -9,12 +9,15 @@ final class OAuth2Service {
     // MARK: - Private Enumeration
     
     private enum OAuth2ServiceError: Error {
-        case invalidURL
+        case invalidRequest
     }
     
     // MARK: - Private Properties
     
     private let tokenStorage: OAuth2TokenStorage = OAuth2TokenStorage()
+    private let urlSession = URLSession.shared
+    private var task: URLSessionTask?
+    private var lastCode: String?
     
     // MARK: - Initializers
     
@@ -23,28 +26,44 @@ final class OAuth2Service {
     // MARK: - Internal Methods
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void) {
+        assert(Thread.isMainThread)
+        guard lastCode != code else {
+            completion(.failure(OAuth2ServiceError.invalidRequest))
+            return
+        }
+        task?.cancel()
+        lastCode = code
+        
         guard let request = makeOAuthTokenRequest(code: code) else {
-            completion(.failure(OAuth2ServiceError.invalidURL))
+            completion(.failure(OAuth2ServiceError.invalidRequest))
             return
         }
         
-        let task = URLSession.shared.data(for: request) { [weak self] result in
-            switch result {
-            case .success(let data):
-                do {
-                    let responseBody = try SnakeCaseJSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                    self?.tokenStorage.token = responseBody.accessToken
-                    completion(.success(responseBody))
-                } catch {
-                    print("JSON decoder error: \(error)")
+        let task = urlSession.data(for: request) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                
+                switch result {
+                case .success(let data):
+                    do {
+                        let responseBody = try SnakeCaseJSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
+                        self.tokenStorage.token = responseBody.accessToken
+                        completion(.success(responseBody))
+                    } catch {
+                        print("JSON decoder error: \(error)")
+                        completion(.failure(error))
+                    }
+                case .failure(let error):
+                    print("URL session error: \(error)")
                     completion(.failure(error))
                 }
-            case .failure(let error):
-                print("URL session error: \(error)")
-                completion(.failure(error))
+                
+                self.task = nil
+                self.lastCode = nil
             }
         }
         
+        self.task = task
         task.resume()
     }
     
