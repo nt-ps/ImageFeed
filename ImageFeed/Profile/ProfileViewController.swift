@@ -28,6 +28,9 @@ final class ProfileViewController: UIViewController {
         addNicknameLabel()
         addStatusLabel()
         addLogoutButton()
+        
+        guard let profile = ProfileService.shared.profile else { return }
+        updateProfileDetails(profile: profile)
     }
     
     // MARK: - Private Methods
@@ -70,7 +73,6 @@ final class ProfileViewController: UIViewController {
         
         let usernameLabel = UILabel()
         
-        usernameLabel.text = "Екатерина Новикова"   // Mock-данные
         usernameLabel.font = UIFont.systemFont(ofSize: 23, weight: .bold)
         usernameLabel.textColor = .ypWhite
         usernameLabel.setCharacterSpacing(0.08)
@@ -96,7 +98,6 @@ final class ProfileViewController: UIViewController {
         
         let nicknameLabel = UILabel()
         
-        nicknameLabel.text = "@ekaterina_nov"   // Mock-данные
         nicknameLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         nicknameLabel.textColor = .ypGray
         nicknameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -121,7 +122,6 @@ final class ProfileViewController: UIViewController {
         
         let statusLabel = UILabel()
         
-        statusLabel.text = "Hello, world!"   // Mock-данные
         statusLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         statusLabel.textColor = .ypWhite
         statusLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -162,5 +162,11 @@ final class ProfileViewController: UIViewController {
         ])
         
         self.logoutButton = logoutButton
+    }
+    
+    private func updateProfileDetails(profile: Profile) {
+        nicknameLabel?.text = profile.loginName
+        usernameLabel?.text = profile.name
+        statusLabel?.text = profile.bio
     }
 }

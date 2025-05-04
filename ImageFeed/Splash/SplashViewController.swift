@@ -6,16 +6,12 @@ final class SplashViewController: UIViewController {
     
     private let showAuthViewSegueIdentifier = "ShowAuthView"
     
-    // MARK: - Private Properties
-    
-    private let oauth2TokenStorage = OAuth2TokenStorage()
-    
     // MARK: - Overrides Methods
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if oauth2TokenStorage.token != nil {
+        if OAuth2TokenStorage.token != nil {
             switchToTabBarController()
         } else {
             performSegue(withIdentifier: showAuthViewSegueIdentifier, sender: nil)
@@ -41,6 +37,12 @@ final class SplashViewController: UIViewController {
     // MARK: - Private Methods
     
     private func switchToTabBarController() {
+        if let token = OAuth2TokenStorage.token {
+            fetchProfile(token: token)
+        } else {
+            print("Failed to get token.")
+        }
+        
         guard let window = UIApplication.shared.windows.first else {
             assertionFailure("Invalid Configuration.")
             return
@@ -48,6 +50,23 @@ final class SplashViewController: UIViewController {
         let tabBarController = UIStoryboard(name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "TabBarViewController")
         window.rootViewController = tabBarController
+    }
+    
+    func fetchProfile(token: String) {
+        UIBlockingProgressHUD.show()
+        
+        ProfileService.shared.fetchProfile(token) { result in
+            UIBlockingProgressHUD.dismiss()
+            
+            switch result {
+            case .success:
+                // ***
+                break
+            case .failure:
+                // TODO: Также можно вывести алерт с ошибкой загрузки профиля.
+                break
+            }
+        }
     }
 }
 

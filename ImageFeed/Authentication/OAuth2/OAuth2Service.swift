@@ -13,8 +13,7 @@ final class OAuth2Service {
     }
     
     // MARK: - Private Properties
-    
-    private let tokenStorage: OAuth2TokenStorage = OAuth2TokenStorage()
+
     private let urlSession = URLSession.shared
     private var task: URLSessionTask?
     private var lastCode: String?
@@ -47,7 +46,7 @@ final class OAuth2Service {
                 case .success(let data):
                     do {
                         let responseBody = try SnakeCaseJSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                        self.tokenStorage.token = responseBody.accessToken
+                        OAuth2TokenStorage.save(responseBody.accessToken)
                         completion(.success(responseBody))
                     } catch {
                         print("JSON decoder error: \(error)")
