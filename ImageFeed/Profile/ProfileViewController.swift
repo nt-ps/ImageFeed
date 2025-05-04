@@ -42,7 +42,7 @@ final class ProfileViewController: UIViewController {
     private func addUserpickImageView() {
         let userpickImageView = UIImageView()
         
-        userpickImageView.image = UIImage(imageLiteralResourceName: "MockUserpick")   // Mock-данные
+        userpickImageView.image = UIImage(named: "MockUserpick")   // Mock-данные
         userpickImageView.contentMode = .scaleAspectFill
         userpickImageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -51,10 +51,15 @@ final class ProfileViewController: UIViewController {
         NSLayoutConstraint.activate([
             userpickImageView.widthAnchor.constraint(equalToConstant: 70),
             userpickImageView.heightAnchor.constraint(equalTo: userpickImageView.widthAnchor),
-            userpickImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: mainTopOffset),
-            userpickImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: mainLeadingOffset)
+            userpickImageView.topAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.topAnchor,
+                constant: mainTopOffset),
+            userpickImageView.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: mainLeadingOffset)
         ])
         
+        userpickImageView.layer.masksToBounds = true
         userpickImageView.layer.cornerRadius = userpickImageView.bounds.width / 2
         
         self.userpickImageView = userpickImageView
@@ -75,8 +80,12 @@ final class ProfileViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             usernameLabel.topAnchor.constraint(equalTo: userpickImageView.bottomAnchor, constant: 8),
-            usernameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: mainLeadingOffset),
-            usernameLabel.trailingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -mainLeadingOffset)
+            usernameLabel.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: mainLeadingOffset),
+            usernameLabel.trailingAnchor.constraint(
+                greaterThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -mainLeadingOffset)
         ])
         
         self.usernameLabel = usernameLabel
@@ -96,8 +105,12 @@ final class ProfileViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             nicknameLabel.topAnchor.constraint(equalTo: usernameLabel.lastBaselineAnchor, constant: 8),
-            nicknameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: mainLeadingOffset),
-            nicknameLabel.trailingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -mainLeadingOffset)
+            nicknameLabel.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: mainLeadingOffset),
+            nicknameLabel.trailingAnchor.constraint(
+                greaterThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -mainLeadingOffset)
         ])
         
         self.nicknameLabel = nicknameLabel
@@ -117,8 +130,12 @@ final class ProfileViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             statusLabel.topAnchor.constraint(equalTo: nicknameLabel.bottomAnchor, constant: 8),
-            statusLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: mainLeadingOffset),
-            statusLabel.trailingAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -mainLeadingOffset)
+            statusLabel.leadingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                constant: mainLeadingOffset),
+            statusLabel.trailingAnchor.constraint(
+                greaterThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -mainLeadingOffset)
         ])
         
         self.statusLabel = statusLabel
@@ -129,7 +146,7 @@ final class ProfileViewController: UIViewController {
         
         let logoutButton = UIButton(type: .custom)
         
-        logoutButton.setImage(UIImage(imageLiteralResourceName: "LogoutButtonIcon"), for: .normal)
+        logoutButton.setImage(UIImage(named: "LogoutButtonIcon"), for: .normal)
         logoutButton.addTarget(self, action: #selector(self.logoutButtonTap), for: .touchUpInside)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
         
@@ -139,7 +156,9 @@ final class ProfileViewController: UIViewController {
             logoutButton.widthAnchor.constraint(equalToConstant: 44),
             logoutButton.heightAnchor.constraint(equalTo: logoutButton.widthAnchor),
             logoutButton.centerYAnchor.constraint(equalTo: userpickImageView.centerYAnchor),
-            logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -mainTrailingOffset + 2)
+            logoutButton.trailingAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+                constant: -mainTrailingOffset + 2)
         ])
         
         self.logoutButton = logoutButton

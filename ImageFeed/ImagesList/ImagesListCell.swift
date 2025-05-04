@@ -10,15 +10,17 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet private weak var containerView: UIView!
     @IBOutlet private weak var likeButton: UIButton!
     
-    // MARK: - Public Properties
+    // MARK: - Static Properties
     
     static let reuseIdentifier = "ImagesListCell"
     
-    public var isLiked: Bool {
+    // MARK: - Internal Properties
+    
+    var isLiked: Bool {
         get { likeValue }
         set {
             likeValue = newValue
-            let likeImage = UIImage(imageLiteralResourceName: likeValue ? "LikeButtonIcon/Active" : "LikeButtonIcon/NoActive")
+            guard let likeImage = UIImage(named: likeValue ? "LikeButtonIcon/Active" : "LikeButtonIcon/NoActive") else { return }
             likeButton.setImage(likeImage, for: .normal)
         }
     }
