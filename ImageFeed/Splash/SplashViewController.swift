@@ -52,29 +52,8 @@ final class SplashViewController: UIViewController {
 }
 
 extension SplashViewController: AuthViewControllerDelegate {
-    func didAuthenticate(_ vc: AuthViewController, withCode code: String) {
-        /*
-        dismiss(animated: true) { [weak self] in
-            guard let self else { return }
-            // TODO: Перенести OAuth2Service.shared.fetchOAuthToken
-            // отсюда в AuthViewController.webViewViewController.
-            OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
-                switch result {
-                case .success:
-                    self?.switchToTabBarController()
-                case .failure:
-                    print("Login failed.")
-                    // TODO: Показать алерт.
-                    // Было оставлено замечание по поводу этого блока.
-                    // В теории написано, что пока обрабатывать ошибку не обязательно,
-                    // в авторском решение указано, что реализацию будем делать в 11-ом спринте.
-                    // Посмотрю, что будет далее, и потом по необходимости добавлю алерт.
-                }
-            }
-        }
-         */
-        
-        dismiss(animated: true) { [weak self] in
+    func didAuthenticate(_ vc: AuthViewController) {
+        vc.dismiss(animated: true) { [weak self] in
             self?.switchToTabBarController()
         }
     }

@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 final class AuthViewController: UIViewController {
     
@@ -105,28 +106,29 @@ final class AuthViewController: UIViewController {
 }
 
 extension AuthViewController: WebViewViewControllerDelegate {
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        // delegate?.didAuthenticate(self, withCode: code)
-        
-        // TODO: OAuth2Service.shared.fetchOAuthToken вывести сюда.
-        // Если успешно, вызвать delegate?.didAuthenticate, где нужно выполнить переход
-        // к ленте через switchToTabBarController.
-        // Если ошибка, то отобразить ошибку в алерте и остаться на экране авторизации.
-        
-        OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
+    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {        
+        vc.dismiss(animated: true) { [weak self] in
             guard let self else { return }
             
-            switch result {
-            case .success:
-                self.delegate?.didAuthenticate(self, withCode: code)
-            case .failure:
-                print("Login failed.")
-                // TODO: Показать алерт.
-                // Было оставлено замечание по поводу этого блока.
-                // В теории написано, что пока обрабатывать ошибку не обязательно,
-                // в авторском решение указано, что реализацию будем делать в 11-ом спринте.
-                // Посмотрю, что будет далее, и потом по необходимости добавлю алерт.
+            ProgressHUD.animate()
+            
+            OAuth2Service.shared.fetchOAuthToken(code: code) { [self] result in
+                ProgressHUD.dismiss()
+                
+                switch result {
+                case .success:
+                    self.delegate?.didAuthenticate(self)
+                case .failure:
+                    print("Login failed.")
+                    // TODO: Показать алерт.
+                    // Было оставлено замечание по поводу этого блока.
+                    // В теории написано, что пока обрабатывать ошибку не обязательно,
+                    // в авторском решение указано, что реализацию будем делать в 11-ом спринте.
+                    // Посмотрю, что будет далее, и потом по необходимости добавлю алерт.
+                }
             }
         }
+        
+        
     }
 }
