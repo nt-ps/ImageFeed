@@ -41,30 +41,26 @@ final class ProfileService {
             return
         }
         
-        let task = urlSession.data(for: request) { [weak self] result in
-            DispatchQueue.main.async {
-                guard let self else { return }
-                
-                switch result {
-                case .success(let data):
-                    do {
-                        let responseBody = try SnakeCaseJSONDecoder().decode(ProfileResponseBody.self, from: data)
-                        let profile = Profile.get(from: responseBody)
+        let task = urlSession.objectTask(
+            for: request,
+            decoder: SnakeCaseJSONDecoder(),
+            completion: { [weak self] (result: Result<ProfileResponseBody, Error>) in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    
+                    switch result {
+                    case .success(let data):
+                        let profile = Profile.get(from: data)
                         ProfileService.shared.profile = profile
                         completion(.success(profile))
-                    } catch {
-                        print("JSON decoder error: \(error)")
+                    case .failure(let error):
                         completion(.failure(error))
                     }
-                case .failure(let error):
-                    print("URL session error: \(error)")
-                    completion(.failure(error))
+                    
+                    self.task = nil
+                    self.lastToken = nil
                 }
-                
-                self.task = nil
-                self.lastToken = nil
-            }
-        }
+            })
         
         self.task = task
         task.resume()

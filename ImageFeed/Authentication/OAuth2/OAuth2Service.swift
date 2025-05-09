@@ -38,29 +38,25 @@ final class OAuth2Service {
             return
         }
         
-        let task = urlSession.data(for: request) { [weak self] result in
-            DispatchQueue.main.async {
-                guard let self else { return }
-                
-                switch result {
-                case .success(let data):
-                    do {
-                        let responseBody = try SnakeCaseJSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                        OAuth2TokenStorage.save(responseBody.accessToken)
-                        completion(.success(responseBody))
-                    } catch {
-                        print("JSON decoder error: \(error)")
+        let task = urlSession.objectTask(
+            for: request,
+            decoder: SnakeCaseJSONDecoder(),
+            completion: { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    
+                    switch result {
+                    case .success(let data):
+                        OAuth2TokenStorage.save(data.accessToken)
+                        completion(.success(data))
+                    case .failure(let error):
                         completion(.failure(error))
                     }
-                case .failure(let error):
-                    print("URL session error: \(error)")
-                    completion(.failure(error))
+                    
+                    self.task = nil
+                    self.lastCode = nil
                 }
-                
-                self.task = nil
-                self.lastCode = nil
-            }
-        }
+            })
         
         self.task = task
         task.resume()

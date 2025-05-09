@@ -48,36 +48,31 @@ final class ProfileImageService {
             return
         }
         
-        let task = urlSession.data(for: request) { [weak self] result in
-            DispatchQueue.main.async {
-                guard let self else { return }
-                
-                switch result {
-                case .success(let data):
-                    do {
-                        let responseBody = try JSONDecoder().decode(ProfileImageResponseBody.self, from: data)
-                        let avatarURL = responseBody.small
+        let task = urlSession.objectTask(
+            for: request,
+            decoder: JSONDecoder(),
+            completion: { [weak self] (result: Result<ProfileImageResponseBody, Error>) in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    
+                    switch result {
+                    case .success(let data):
+                        let avatarURL = data.small
                         ProfileImageService.shared.avatarURL = avatarURL
+                        NotificationCenter.default.post(
+                            name: ProfileImageService.didChangeNotification,
+                            object: self,
+                            userInfo: ["URL": avatarURL])
                         completion(.success(avatarURL))
-                        NotificationCenter.default
-                            .post(
-                                name: ProfileImageService.didChangeNotification,
-                                object: self,
-                                userInfo: ["URL": avatarURL])                    
-                    } catch {
-                        print("JSON decoder error: \(error)")
+                    case .failure(let error):
                         completion(.failure(error))
                     }
-                case .failure(let error):
-                    print("URL session error: \(error)")
-                    completion(.failure(error))
+                    
+                    self.task = nil
+                    self.lastToken = nil
+                    self.lastUsername = nil
                 }
-                
-                self.task = nil
-                self.lastToken = nil
-                self.lastUsername = nil
-            }
-        }
+            })
         
         self.task = task
         task.resume()
