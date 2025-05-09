@@ -59,8 +59,21 @@ final class SplashViewController: UIViewController {
             UIBlockingProgressHUD.dismiss()
             
             switch result {
-            case .success:
-                // ***
+            case .success(let result):
+                let username = result.username
+                
+                ProfileImageService.shared.fetchProfileImageURL(token, username: username) { result in
+                    UIBlockingProgressHUD.dismiss()
+                    
+                    switch result {
+                    case .success:
+                        // ***
+                        break
+                    case .failure:
+                        // TODO: Также можно вывести алерт с ошибкой загрузки профиля.
+                        break
+                    }
+                }
                 break
             case .failure:
                 // TODO: Также можно вывести алерт с ошибкой загрузки профиля.

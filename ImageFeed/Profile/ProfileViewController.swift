@@ -16,6 +16,8 @@ final class ProfileViewController: UIViewController {
     private var mainLeadingOffset: CGFloat = 16
     private var mainTrailingOffset: CGFloat = 16
     
+    private var profileImageServiceObserver: NSObjectProtocol?
+    
     // MARK: - Overrides Methods
     
     override func viewDidLoad() {
@@ -31,6 +33,17 @@ final class ProfileViewController: UIViewController {
         
         guard let profile = ProfileService.shared.profile else { return }
         updateProfileDetails(profile: profile)
+        
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
     }
     
     // MARK: - Private Methods
@@ -168,5 +181,13 @@ final class ProfileViewController: UIViewController {
         nicknameLabel?.text = profile.loginName
         usernameLabel?.text = profile.name
         statusLabel?.text = profile.bio
+    }
+    
+    private func updateAvatar() {
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        // TODO [Sprint 11] Обновить аватар, используя Kingfisher
     }
 }
