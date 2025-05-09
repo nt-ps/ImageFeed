@@ -47,7 +47,7 @@ final class OAuth2Service {
                     
                     switch result {
                     case .success(let data):
-                        OAuth2TokenStorage.save(data.accessToken)
+                        OAuth2TokenStorage.token = data.accessToken
                         completion(.success(data))
                     case .failure(let error):
                         completion(.failure(error))
