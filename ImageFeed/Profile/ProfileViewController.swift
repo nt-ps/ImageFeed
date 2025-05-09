@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
@@ -12,16 +13,23 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Private Properties
     
-    private var mainTopOffset: CGFloat = 32
-    private var mainLeadingOffset: CGFloat = 16
-    private var mainTrailingOffset: CGFloat = 16
+    private let mainTopOffset: CGFloat = 32
+    private let mainLeadingOffset: CGFloat = 16
+    private let mainTrailingOffset: CGFloat = 16
+    
+    private let userpickSize: Double = 70
     
     private var profileImageServiceObserver: NSObjectProtocol?
+    
+    private let imageCache = ImageCache.default
     
     // MARK: - Overrides Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        imageCache.clearMemoryCache()
+        imageCache.clearDiskCache()
         
         setView()
         
@@ -58,14 +66,14 @@ final class ProfileViewController: UIViewController {
     private func addUserpickImageView() {
         let userpickImageView = UIImageView()
         
-        userpickImageView.image = UIImage(named: "MockUserpick")   // Mock-данные
+        userpickImageView.image = UIImage(named: "UserpickStub")
         userpickImageView.contentMode = .scaleAspectFill
         userpickImageView.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(userpickImageView)
         
         NSLayoutConstraint.activate([
-            userpickImageView.widthAnchor.constraint(equalToConstant: 70),
+            userpickImageView.widthAnchor.constraint(equalToConstant: userpickSize),
             userpickImageView.heightAnchor.constraint(equalTo: userpickImageView.widthAnchor),
             userpickImageView.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
@@ -74,9 +82,6 @@ final class ProfileViewController: UIViewController {
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
                 constant: mainLeadingOffset)
         ])
-        
-        userpickImageView.layer.masksToBounds = true
-        userpickImageView.layer.cornerRadius = userpickImageView.bounds.width / 2
         
         self.userpickImageView = userpickImageView
     }
@@ -188,6 +193,13 @@ final class ProfileViewController: UIViewController {
             let profileImageURL = ProfileImageService.shared.avatarURL,
             let url = URL(string: profileImageURL)
         else { return }
-        // TODO [Sprint 11] Обновить аватар, используя Kingfisher
+        
+        userpickImageView?.kf.indicatorType = .activity
+        userpickImageView?.kf.setImage(
+            with: url,
+            placeholder: UIImage(named: "UserpickStub"))
+        
+        userpickImageView?.layer.cornerRadius = userpickSize / 2
+        userpickImageView?.layer.masksToBounds = true
     }
 }
