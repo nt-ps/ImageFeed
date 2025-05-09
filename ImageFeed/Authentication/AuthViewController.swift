@@ -12,6 +12,10 @@ final class AuthViewController: UIViewController {
     private var logoImageView: UIImageView?
     private var loginButton: UIButton?
     
+    // MARK: - Alert
+    
+    private var alertPresenter: AlertPresenter?
+    
     // MARK: - Segue Identifiers
 
     private let showWebViewSegueIdentifier = "ShowWebView"
@@ -20,6 +24,8 @@ final class AuthViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        alertPresenter = AlertPresenter(delegate: self)
         
         setView()
         setBackButton()
@@ -103,6 +109,16 @@ final class AuthViewController: UIViewController {
         
         self.loginButton = loginButton
     }
+    
+    private func show(error model: ErrorViewModel) {
+        let alertModel: AlertModel = AlertModel(
+            title: "Что-то пошло не так(",
+            message: model.message,
+            buttonText: model.buttonText,
+            completion: model.completion)
+        
+        alertPresenter?.show(alert: alertModel)
+    }
 }
 
 extension AuthViewController: WebViewViewControllerDelegate {
@@ -118,17 +134,25 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 switch result {
                 case .success:
                     self.delegate?.didAuthenticate(self)
-                case .failure:
+                case .failure(let error):
                     print("Login failed.")
-                    // TODO: Показать алерт.
-                    // Было оставлено замечание по поводу этого блока.
-                    // В теории написано, что пока обрабатывать ошибку не обязательно,
-                    // в авторском решение указано, что реализацию будем делать в 11-ом спринте.
-                    // Посмотрю, что будет далее, и потом по необходимости добавлю алерт.
+                    let errorViewModel = ErrorViewModel(
+                        message: error.localizedDescription,
+                        buttonText: "Ок",
+                        completion: nil)
+                    
+                    self.show(error: errorViewModel)
                 }
             }
         }
         
         
+    }
+}
+
+extension AuthViewController: AlertPresenterDelegate {
+    func didReceiveAlert(alert: UIAlertController?) {
+        guard let alert else { return }
+        present(alert, animated: true, completion: nil)
     }
 }
