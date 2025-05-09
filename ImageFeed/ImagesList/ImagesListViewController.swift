@@ -2,9 +2,9 @@ import UIKit
 
 final class ImagesListViewController: UIViewController {
     
-    // MARK: - IB Outlets
+    // MARK: - Views
     
-    @IBOutlet private var tableView: UITableView!
+    private var tableView: UITableView?
     
     // MARK: - Private Properties
     
@@ -17,33 +17,45 @@ final class ImagesListViewController: UIViewController {
         return formatter
     } ()
     
-    private let showSingleImageSegueIdentifier = "ShowSingleImage"
+    //private let showSingleImageSegueIdentifier = "ShowSingleImage"
     
     // MARK: - Overrides Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        setView()
+        addTableView()
+    }
+
+    // MARK: - Private Methods
+    
+    private func setView() {
+        view.backgroundColor = .ypBlack
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showSingleImageSegueIdentifier {
-            guard
-                let viewController = segue.destination as? SingleImageViewController,
-                let indexPath = sender as? IndexPath
-            else {
-                assertionFailure("Invalid segue destination")
-                return
-            }
-
-            let image = UIImage(named: "MockData/\(photosName[indexPath.row])")
-            viewController.image = image
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
+    private func addTableView() {
+        let tableView = UITableView()
+        
+        tableView.dataSource = self
+        tableView.delegate = self
+        
+        tableView.backgroundColor = .ypBlack
+        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        tableView.register(ImagesListCell.self, forCellReuseIdentifier: "ImagesListCell")
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(tableView)
+        
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+        ])
+        
+        self.tableView = tableView
     }
-
 }
 
 // MARK: - Data Source Extension
@@ -70,8 +82,8 @@ extension ImagesListViewController {
     private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         guard let image = UIImage(named: "MockData/\(photosName[indexPath.row])") else { return }
         
-        cell.cellImage.image = image
-        cell.dateLabel.text = dateFormatter.string(from: Date())
+        cell.cellImage?.image = image
+        cell.dateLabel?.text = dateFormatter.string(from: Date())
         cell.isLiked = indexPath.row % 2 == 0
     }
 }
@@ -80,7 +92,13 @@ extension ImagesListViewController {
 
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: showSingleImageSegueIdentifier, sender: indexPath)
+        let singleImageViewController = SingleImageViewController()
+        
+        let image = UIImage(named: "MockData/\(photosName[indexPath.row])")
+        singleImageViewController.image = image
+        
+        singleImageViewController.modalPresentationStyle = .fullScreen
+        present(singleImageViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

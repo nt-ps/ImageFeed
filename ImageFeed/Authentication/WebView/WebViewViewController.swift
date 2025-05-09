@@ -21,6 +21,7 @@ final class WebViewViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setView()
         addWebView()
         addProgressView()
         
@@ -38,6 +39,10 @@ final class WebViewViewController: UIViewController {
     }
     
     // MARK: - Private Methods
+    
+    private func setView() {
+        view.backgroundColor = .ypWhite
+    }
     
     private func addWebView() {
         let webView = WKWebView()

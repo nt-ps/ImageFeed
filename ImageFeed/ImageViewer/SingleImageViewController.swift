@@ -4,9 +4,8 @@ final class SingleImageViewController: UIViewController {
     
     // MARK: - IB Outlets
     
-    @IBOutlet private weak var imageView: UIImageView!
-    @IBOutlet private weak var scrollView: UIScrollView!
-    @IBOutlet private weak var sharingButton: UIButton!
+    private var imageView: UIImageView?
+    private var scrollView: UIScrollView?
     
     // MARK: - Public Properties
     
@@ -14,8 +13,8 @@ final class SingleImageViewController: UIViewController {
         didSet {
             guard isViewLoaded, let image else { return }
             
-            imageView.image = image
-            imageView.frame.size = image.size
+            imageView?.image = image
+            imageView?.frame.size = image.size
             rescaleAndCenterImageInScrollView(image: image)
         }
     }
@@ -25,25 +24,27 @@ final class SingleImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        scrollView.minimumZoomScale = 0.1
-        scrollView.maximumZoomScale = 1.25
-        
-        sharingButton.layer.masksToBounds = true
-        sharingButton.layer.cornerRadius = sharingButton.bounds.width / 2
+        setView()
+        addScrollView()
+        addImageView()
+        addBackwardButton()
+        addSharingButton()
         
         guard let image else { return }
-        imageView.image = image
-        imageView.frame.size = image.size
+        imageView?.image = image
+        imageView?.frame.size = image.size
         rescaleAndCenterImageInScrollView(image: image)
     }
     
-    // MARK: - IB Actions
+    // MARK: - Button Actions
     
-    @IBAction private func didTapBackButton() {
+    @objc
+    private func didTapBackButton() {
         dismiss(animated: true, completion: nil)
     }
     
-    @IBAction private func didTapShareButton() {
+    @objc
+    private func didTapShareButton() {
         guard let image else { return }
         
         let share = UIActivityViewController(activityItems: [image], applicationActivities: nil)
@@ -52,7 +53,88 @@ final class SingleImageViewController: UIViewController {
     
     // MARK: - Private Methods
     
+    private func setView() {
+        view.backgroundColor = .ypBlack
+    }
+    
+    private func addScrollView() {
+        let scrollView = UIScrollView()
+        
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.minimumZoomScale = 0.1
+        scrollView.maximumZoomScale = 1.25
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(scrollView)
+        
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+        ])
+        
+        scrollView.contentInsetAdjustmentBehavior = UIScrollView.ContentInsetAdjustmentBehavior.never
+        
+        scrollView.delegate = self
+        
+        self.scrollView = scrollView
+    }
+    
+    private func addImageView() {
+        let imageView = UIImageView()
+        
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        scrollView?.addSubview(imageView)
+        
+        self.imageView = imageView
+    }
+    
+    private func addBackwardButton() {
+        let backwardButton = UIButton(type: .custom)
+        
+        backwardButton.setImage(UIImage(named: "BackwardButtonIcon"), for: .normal)
+        backwardButton.addTarget(self, action: #selector(self.didTapBackButton), for: .touchUpInside)
+        backwardButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(backwardButton)
+        
+        NSLayoutConstraint.activate([
+            backwardButton.widthAnchor.constraint(equalToConstant: 44),
+            backwardButton.heightAnchor.constraint(equalTo: backwardButton.widthAnchor),
+            backwardButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            backwardButton.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor),
+            backwardButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+        ])
+    }
+    
+    private func addSharingButton() {
+        let sharingButton = UIButton(type: .custom)
+        
+        sharingButton.setImage(UIImage(named: "SharingButtonIcon"), for: .normal)
+        sharingButton.backgroundColor = .ypBlack
+        sharingButton.addTarget(self, action: #selector(self.didTapShareButton), for: .touchUpInside)
+        sharingButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(sharingButton)
+        
+        NSLayoutConstraint.activate([
+            sharingButton.widthAnchor.constraint(equalToConstant: 50),
+            sharingButton.heightAnchor.constraint(equalTo: sharingButton.widthAnchor),
+            sharingButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            sharingButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant:  -51)
+        ])
+        
+        sharingButton.layer.masksToBounds = true
+        sharingButton.layer.cornerRadius = 25
+    }
+    
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
+        guard let scrollView else { return }
+        
         let minZoomScale = scrollView.minimumZoomScale
         let maxZoomScale = scrollView.maximumZoomScale
         
@@ -76,7 +158,7 @@ extension SingleImageViewController: UIScrollViewDelegate {
     }
     
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        let imageViewSize = imageView.frame.size
+        guard let imageViewSize = imageView?.frame.size else { return }
         let scrollViewSize = scrollView.bounds.size
         let verticalPadding = imageViewSize.height < scrollViewSize.height ? (scrollViewSize.height - imageViewSize.height) / 2 : 0
         let horizontalPadding = imageViewSize.width < scrollViewSize.width ? (scrollViewSize.width - imageViewSize.width) / 2 : 0
