@@ -1,6 +1,6 @@
 import Foundation
 
-class SnakeCaseJSONDecoder: JSONDecoder, @unchecked Sendable {
+final class SnakeCaseJSONDecoder: JSONDecoder, @unchecked Sendable {
     override init() {
         super.init()
         keyDecodingStrategy = .convertFromSnakeCase

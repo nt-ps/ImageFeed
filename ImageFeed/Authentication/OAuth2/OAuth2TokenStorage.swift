@@ -1,19 +1,16 @@
-import Foundation
+import SwiftKeychainWrapper
 
 final class OAuth2TokenStorage {
     
-    // MARK: - Internal Properties
-    
-    var token: String? {
+    static var token: String? {
         get { storage.string(forKey: Keys.accessToken.rawValue) }
-        set { storage.set(newValue, forKey: Keys.accessToken.rawValue) }
+        set {
+            guard let newValue else { return }
+            storage.set(newValue, forKey: Keys.accessToken.rawValue)
+        }
     }
-    
-    // MARK: - Private Properties
-    
-    private let storage: UserDefaults = .standard
-    
-    // MARK: - Private Enumerations
+
+    private static let storage: KeychainWrapper = .standard
     
     private enum Keys: String {
         case accessToken

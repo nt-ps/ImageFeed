@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 final class AuthViewController: UIViewController {
     
@@ -11,14 +12,16 @@ final class AuthViewController: UIViewController {
     private var logoImageView: UIImageView?
     private var loginButton: UIButton?
     
-    // MARK: - Segue Identifiers
-
-    private let showWebViewSegueIdentifier = "ShowWebView"
+    // MARK: - Alert
+    
+    private var alertPresenter: AlertPresenter?
     
     // MARK: - Overrides Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        alertPresenter = AlertPresenter(delegate: self)
         
         setView()
         setBackButton()
@@ -26,24 +29,24 @@ final class AuthViewController: UIViewController {
         addLoginButton()
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showWebViewSegueIdentifier {
-            guard let webViewViewController = segue.destination as? WebViewViewController else {
-                assertionFailure("Failed to prepare for \(showWebViewSegueIdentifier)")
-                return
-            }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
 
-            webViewViewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     // MARK: - Private Methods
     
     @objc
     private func loginButtonTap() {
-        performSegue(withIdentifier: showWebViewSegueIdentifier, sender: loginButton)
+        let webViewController = WebViewViewController()
+        webViewController.delegate = self
+        webViewController.modalPresentationStyle = .fullScreen
+        navigationController?.pushViewController(webViewController, animated: true)
     }
     
     private func setView() {
@@ -102,14 +105,43 @@ final class AuthViewController: UIViewController {
         
         self.loginButton = loginButton
     }
+    
+    private func show(error model: ErrorViewModel) {
+        let alertModel = AlertModel(from: model)
+        alertPresenter?.show(alert: alertModel)
+    }
 }
 
 extension AuthViewController: WebViewViewControllerDelegate {
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        delegate?.didAuthenticate(self, withCode: code)
-        // TODO: OAuth2Service.shared.fetchOAuthToken вывести сюда.
-        // Если успешно, вызвать delegate?.didAuthenticate, где нужно выполнить переход
-        // к ленте через switchToTabBarController.
-        // Если ошибка, то отобразить ошибку в алерте и остаться на экране авторизации.
+    func webViewViewController(didAuthenticateWithCode code: String) {
+        // Вместо "vc: WebViewViewController" и "vc.dismiss" вывожу контроллеры
+        // из navigationController до текущего, поскольку иначе почему-то
+        // текущий контроллер закрывается и алерт не выводится.
+        navigationController?.popToViewController(self, animated: true)
+
+        UIBlockingProgressHUD.show()
+        
+        OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self else { return }
+            
+            switch result {
+            case .success(let token):
+                self.delegate?.didAuthenticate(self, token: token)
+            case .failure(let error):
+                print("[webViewViewController] Login failed.")
+                
+                let errorViewModel = ErrorViewModel(message: error.localizedDescription)
+                self.show(error: errorViewModel)
+            }
+        }
+    }
+}
+
+extension AuthViewController: AlertPresenterDelegate {
+    func didReceiveAlert(alert: UIAlertController?) {
+        guard let alert else { return }
+        present(alert, animated: true, completion: nil)
     }
 }

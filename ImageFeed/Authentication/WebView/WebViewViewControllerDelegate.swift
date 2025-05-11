@@ -1,3 +1,3 @@
 protocol WebViewViewControllerDelegate {
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
+    func webViewViewController(didAuthenticateWithCode code: String)
 }
