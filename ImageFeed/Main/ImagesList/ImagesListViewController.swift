@@ -17,8 +17,6 @@ final class ImagesListViewController: UIViewController {
         return formatter
     } ()
     
-    //private let showSingleImageSegueIdentifier = "ShowSingleImage"
-    
     // MARK: - Overrides Methods
     
     override func viewDidLoad() {

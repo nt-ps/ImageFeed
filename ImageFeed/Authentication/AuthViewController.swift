@@ -16,10 +16,6 @@ final class AuthViewController: UIViewController {
     
     private var alertPresenter: AlertPresenter?
     
-    // MARK: - Segue Identifiers
-
-    private let showWebViewSegueIdentifier = "ShowWebView"
-    
     // MARK: - Overrides Methods
     
     override func viewDidLoad() {
@@ -111,42 +107,35 @@ final class AuthViewController: UIViewController {
     }
     
     private func show(error model: ErrorViewModel) {
-        let alertModel: AlertModel = AlertModel(
-            title: "Что-то пошло не так(",
-            message: model.message,
-            buttonText: model.buttonText,
-            completion: model.completion)
-        
+        let alertModel = AlertModel(from: model)
         alertPresenter?.show(alert: alertModel)
     }
 }
 
 extension AuthViewController: WebViewViewControllerDelegate {
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {        
-        vc.dismiss(animated: true) { [weak self] in
+    func webViewViewController(didAuthenticateWithCode code: String) {
+        // Вместо "vc: WebViewViewController" и "vc.dismiss" вывожу контроллеры
+        // из navigationController до текущего, поскольку иначе почему-то
+        // текущий контроллер закрывается и алерт не выводится.
+        navigationController?.popToViewController(self, animated: true)
+
+        UIBlockingProgressHUD.show()
+        
+        OAuth2Service.shared.fetchOAuthToken(code: code) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
             guard let self else { return }
             
-            UIBlockingProgressHUD.show()
-            
-            OAuth2Service.shared.fetchOAuthToken(code: code) { [self] result in
-                UIBlockingProgressHUD.dismiss()
+            switch result {
+            case .success(let token):
+                self.delegate?.didAuthenticate(self, token: token)
+            case .failure(let error):
+                print("[webViewViewController] Login failed.")
                 
-                switch result {
-                case .success:
-                    self.delegate?.didAuthenticate(self)
-                case .failure(let error):
-                    print("Login failed.")
-                    let errorViewModel = ErrorViewModel(
-                        message: error.localizedDescription,
-                        buttonText: "Ок",
-                        completion: nil)
-                    
-                    self.show(error: errorViewModel)
-                }
+                let errorViewModel = ErrorViewModel(message: error.localizedDescription)
+                self.show(error: errorViewModel)
             }
         }
-        
-        
     }
 }
 

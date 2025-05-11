@@ -2,10 +2,6 @@ import UIKit
 
 final class SplashViewController: UIViewController {
     
-    // MARK: - Segue Identifiers
-    
-    //private let showAuthViewSegueIdentifier = "ShowAuthView"
-    
     // MARK: - Overrides Methods
     
     override func viewDidLoad() {
@@ -17,13 +13,14 @@ final class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if OAuth2TokenStorage.token != nil {
-            switchToTabBarController()
+        if let token = OAuth2TokenStorage.token{
+            switchToTabBarController(token: token)
         } else {
             let navigationController = NavigationController()
-            navigationController.authViewController?.delegate = self
             navigationController.modalPresentationStyle = .fullScreen
-            present(navigationController, animated: true)
+            present(navigationController, animated: true) { [weak self] in
+                navigationController.authViewController?.delegate = self
+            }
         }
     }
     
@@ -46,58 +43,47 @@ final class SplashViewController: UIViewController {
         ])
     }
     
-    private func switchToTabBarController() {
-        if let token = OAuth2TokenStorage.token {
-            fetchProfile(token: token)
-        } else {
-            print("Failed to get token.")
-        }
+    private func switchToTabBarController(token: String) {
+        fetchProfile(token: token)
         
         guard let window = UIApplication.shared.windows.first else {
-            assertionFailure("Invalid Configuration.")
+            assertionFailure("[switchToTabBarController] Invalid Configuration.")
             return
         }
-        //let tabBarController = UIStoryboard(name: "Main", bundle: .main)
-        //    .instantiateViewController(withIdentifier: "TabBarViewController")
+
         let tabBarController = TabBarController()
         window.rootViewController = tabBarController
     }
     
-    func fetchProfile(token: String) {
+    private func fetchProfile(token: String) {
         UIBlockingProgressHUD.show()
         
         ProfileService.shared.fetchProfile(token) { result in
-            UIBlockingProgressHUD.dismiss()
-            
             switch result {
-            case .success(let result):
-                let username = result.username
-                
-                ProfileImageService.shared.fetchProfileImageURL(token, username: username) { result in
+            case .success(let data):
+                ProfileImageService.shared.fetchProfileImageURL(token, username: data.username) { result in
                     UIBlockingProgressHUD.dismiss()
                     
                     switch result {
                     case .success:
-                        // ***
                         break
-                    case .failure:
-                        // TODO: Также можно вывести алерт с ошибкой загрузки профиля.
-                        break
+                    case .failure(let error):
+                        print("[fetchProfile] Failed to get profile image URL: \(error.localizedDescription)")
                     }
                 }
-                break
-            case .failure:
-                // TODO: Также можно вывести алерт с ошибкой загрузки профиля.
-                break
+            case .failure(let error):
+                print("[fetchProfile] Failed to get user profile: \(error.localizedDescription)")
+                
+                UIBlockingProgressHUD.dismiss()
             }
         }
     }
 }
 
 extension SplashViewController: AuthViewControllerDelegate {
-    func didAuthenticate(_ vc: AuthViewController) {
+    func didAuthenticate(_ vc: AuthViewController, token: String) {
         vc.dismiss(animated: true) { [weak self] in
-            self?.switchToTabBarController()
+            self?.switchToTabBarController(token: token)
         }
     }
 }

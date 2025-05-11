@@ -50,11 +50,11 @@ extension URLSession {
                     let responseBody = try decoder.decode(T.self, from: data)
                     completion(.success(responseBody))
                 } catch {
-                    print("JSON decoder error: \(error.localizedDescription). Data: \(String(data: data, encoding: .utf8) ?? "")")
+                    print("[objectTask] JSON decoder error: \(error.localizedDescription). Data: \(String(data: data, encoding: .utf8) ?? "")")
                     completion(.failure(error))
                 }
             case .failure(let error):
-                print("URL session error: \(error)")
+                print("[objectTask] URL session error: \(error)")
                 completion(.failure(error))
             }
         }

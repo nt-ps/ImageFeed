@@ -25,8 +25,6 @@ final class WebViewViewController: UIViewController {
         addWebView()
         addProgressView()
         
-        webView?.navigationDelegate = self
-        
         loadAuthView()
         
         estimatedProgressObservation = webView?.observe(
@@ -58,6 +56,8 @@ final class WebViewViewController: UIViewController {
             webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
+        webView.navigationDelegate = self
+        
         self.webView = webView
     }
     
@@ -80,7 +80,7 @@ final class WebViewViewController: UIViewController {
     
     private func loadAuthView() {
         guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
-            print("Failed to initialize URL components.")
+            print("[loadAuthView] Failed to initialize URL components.")
             return
         }
         
@@ -92,7 +92,7 @@ final class WebViewViewController: UIViewController {
         ]
         
         guard let url = urlComponents.url else {
-            print("Failed to get URL.")
+            print("[loadAuthView] Failed to get URL.")
             return
         }
         
@@ -119,7 +119,7 @@ extension WebViewViewController: WKNavigationDelegate {
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
          if let code = code(from: navigationAction) {
-             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
+             delegate?.webViewViewController(didAuthenticateWithCode: code)
              decisionHandler(.cancel)
          } else {
              decisionHandler(.allow)

@@ -50,7 +50,7 @@ final class ProfileService {
                     
                     switch result {
                     case .success(let data):
-                        let profile = Profile.get(from: data)
+                        let profile = Profile(from: data)
                         ProfileService.shared.profile = profile
                         completion(.success(profile))
                     case .failure(let error):
@@ -70,7 +70,7 @@ final class ProfileService {
     
     private func makeUserProfileRequest(token: String) -> URLRequest? {
         guard var url = Constants.defaultBaseURL else {
-            print("Failed to get URL.")
+            print("[makeUserProfileRequest] Failed to get URL.")
             return nil
         }
         url = url.appendingPathComponent("me")

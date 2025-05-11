@@ -1,4 +1,3 @@
-import Foundation
 import SwiftKeychainWrapper
 
 final class OAuth2TokenStorage {

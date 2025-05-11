@@ -20,7 +20,8 @@ final class ImagesListCell: UITableViewCell {
         get { likeValue }
         set {
             likeValue = newValue
-            guard let likeImage = UIImage(named: likeValue ? "LikeButtonIcon/Active" : "LikeButtonIcon/NoActive") else { return }
+            let imageName = likeValue ? "LikeButtonIcon/Active" : "LikeButtonIcon/NoActive"
+            guard let likeImage = UIImage(named: imageName) else { return }
             likeButton?.setImage(likeImage, for: .normal)
         }
     }
@@ -44,7 +45,7 @@ final class ImagesListCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        print("init(coder:) has not been implemented")
+        print("ImagesListCell.init(coder:) has not been implemented")
     }
     
     // MARK: - Private Methods

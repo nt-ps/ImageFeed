@@ -1,10 +1,10 @@
 import Foundation
 
 final class ProfileImageService {
+    
     // MARK: - Static Properties
     
     static let shared = ProfileImageService()
-    
     static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     
     // MARK: - Internal Properties
@@ -62,7 +62,8 @@ final class ProfileImageService {
                         NotificationCenter.default.post(
                             name: ProfileImageService.didChangeNotification,
                             object: self,
-                            userInfo: ["URL": avatarURL])
+                            userInfo: ["URL": avatarURL]
+                        )
                         completion(.success(avatarURL))
                     case .failure(let error):
                         completion(.failure(error))
@@ -82,7 +83,7 @@ final class ProfileImageService {
     
     private func makePublicProfileRequest(token: String, username: String) -> URLRequest? {
         guard var url = Constants.defaultBaseURL else {
-            print("Failed to get URL.")
+            print("[makePublicProfileRequest] Failed to get URL.")
             return nil
         }
         url = url.appendingPathComponent("users/\(username)")

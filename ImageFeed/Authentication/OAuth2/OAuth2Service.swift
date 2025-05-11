@@ -24,7 +24,7 @@ final class OAuth2Service {
     
     // MARK: - Internal Methods
     
-    func fetchOAuthToken(code: String, completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void) {
+    func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
         guard lastCode != code else {
             completion(.failure(OAuth2ServiceError.invalidRequest))
@@ -47,8 +47,9 @@ final class OAuth2Service {
                     
                     switch result {
                     case .success(let data):
-                        OAuth2TokenStorage.token = data.accessToken
-                        completion(.success(data))
+                        let token: String = data.accessToken
+                        OAuth2TokenStorage.token = token
+                        completion(.success(token))
                     case .failure(let error):
                         completion(.failure(error))
                     }
@@ -66,7 +67,7 @@ final class OAuth2Service {
     
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
-            print("Failed to initialize URL components.")
+            print("[makeOAuthTokenRequest] Failed to initialize URL components.")
             return nil
         }
         
@@ -79,7 +80,7 @@ final class OAuth2Service {
         ]
         
         guard let url = urlComponents.url else {
-            print("Failed to get URL.")
+            print("[makeOAuthTokenRequest] Failed to get URL.")
             return nil
         }
         
