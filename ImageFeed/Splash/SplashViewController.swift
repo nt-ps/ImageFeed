@@ -2,6 +2,10 @@ import UIKit
 
 final class SplashViewController: UIViewController {
     
+    // MARK: - Private Properties
+    
+    private var profileImageServiceObserver: NSObjectProtocol?
+    
     // MARK: - Overrides Methods
     
     override func viewDidLoad() {
@@ -46,13 +50,20 @@ final class SplashViewController: UIViewController {
     private func switchToTabBarController(token: String) {
         fetchProfile(token: token)
         
-        guard let window = UIApplication.shared.windows.first else {
-            assertionFailure("[switchToTabBarController] Invalid Configuration.")
-            return
-        }
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { _ in
+                guard let window = UIApplication.shared.windows.first else {
+                    assertionFailure("[switchToTabBarController] Invalid Configuration.")
+                    return
+                }
 
-        let tabBarController = TabBarController()
-        window.rootViewController = tabBarController
+                let tabBarController = TabBarController()
+                window.rootViewController = tabBarController
+            }
     }
     
     private func fetchProfile(token: String) {

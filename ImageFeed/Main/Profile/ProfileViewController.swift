@@ -41,7 +41,7 @@ final class ProfileViewController: UIViewController {
         
         guard let profile = ProfileService.shared.profile else { return }
         updateProfileDetails(profile: profile)
-        
+
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
                 forName: ProfileImageService.didChangeNotification,
