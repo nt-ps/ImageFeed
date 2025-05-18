@@ -6,15 +6,11 @@ final class OAuth2Service {
     
     static let shared = OAuth2Service()
     
-    // MARK: - Private Enumeration
-    
-    private enum OAuth2ServiceError: Error {
-        case invalidURL
-    }
-    
     // MARK: - Private Properties
-    
-    private let tokenStorage: OAuth2TokenStorage = OAuth2TokenStorage()
+
+    private let urlSession = URLSession.shared
+    private var task: URLSessionTask?
+    private var lastCode: String?
     
     // MARK: - Initializers
     
@@ -22,29 +18,42 @@ final class OAuth2Service {
     
     // MARK: - Internal Methods
     
-    func fetchOAuthToken(code: String, completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void) {
+    func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        assert(Thread.isMainThread)
+        guard lastCode != code else {
+            completion(.failure(OAuth2ServiceError.invalidRequest))
+            return
+        }
+        task?.cancel()
+        lastCode = code
+        
         guard let request = makeOAuthTokenRequest(code: code) else {
-            completion(.failure(OAuth2ServiceError.invalidURL))
+            completion(.failure(OAuth2ServiceError.invalidRequest))
             return
         }
         
-        let task = URLSession.shared.data(for: request) { [weak self] result in
-            switch result {
-            case .success(let data):
-                do {
-                    let responseBody = try SnakeCaseJSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                    self?.tokenStorage.token = responseBody.accessToken
-                    completion(.success(responseBody))
-                } catch {
-                    print("JSON decoder error: \(error)")
-                    completion(.failure(error))
+        let task = urlSession.objectTask(
+            for: request,
+            decoder: SnakeCaseJSONDecoder(),
+            completion: { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    
+                    switch result {
+                    case .success(let data):
+                        let token: String = data.accessToken
+                        OAuth2TokenStorage.token = token
+                        completion(.success(token))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                    
+                    self.task = nil
+                    self.lastCode = nil
                 }
-            case .failure(let error):
-                print("URL session error: \(error)")
-                completion(.failure(error))
-            }
-        }
+            })
         
+        self.task = task
         task.resume()
     }
     
@@ -52,7 +61,7 @@ final class OAuth2Service {
     
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
-            print("Failed to initialize URL components.")
+            print("[\(#function)] Failed to initialize URL components.")
             return nil
         }
         
@@ -65,12 +74,12 @@ final class OAuth2Service {
         ]
         
         guard let url = urlComponents.url else {
-            print("Failed to get URL.")
+            print("[\(#function)] Failed to get URL.")
             return nil
         }
         
         var request: URLRequest = URLRequest(url: url)
-        request.httpMethod = "POST"
+        request.httpMethod = HTTPMethod.post
         return request
     }
 }
