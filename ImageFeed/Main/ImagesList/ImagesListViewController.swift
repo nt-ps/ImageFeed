@@ -4,7 +4,22 @@ final class ImagesListViewController: UIViewController {
     
     // MARK: - Views
     
-    private var tableView: UITableView?
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.backgroundColor = .ypBlack
+        tableView.contentInset = UIEdgeInsets(top: tableViewVerticalInsets, left: 0, bottom: tableViewVerticalInsets, right: 0)
+        tableView.register(ImagesListCell.self, forCellReuseIdentifier: ImagesListCell.reuseIdentifier)
+        return tableView
+    } ()
+    
+    // MARK: - UI Properties
+    
+    private let tableViewVerticalInsets: Double = 12
+    private let imageInsets = UIEdgeInsets(
+        top: ImagesListCell.containerViewVerticalMargin,
+        left: ImagesListCell.containerViewHorizontalMargin,
+        bottom: ImagesListCell.containerViewVerticalMargin,
+        right: ImagesListCell.containerViewHorizontalMargin)
     
     // MARK: - Private Properties
     
@@ -17,43 +32,35 @@ final class ImagesListViewController: UIViewController {
         return formatter
     } ()
     
-    // MARK: - Overrides Methods
+    private let currentDate = Date()
+    
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setView()
-        addTableView()
-    }
-
-    // MARK: - Private Methods
-    
-    private func setView() {
         view.backgroundColor = .ypBlack
-    }
-    
-    private func addTableView() {
-        let tableView = UITableView()
+        view.addSubviews(tableView)
+        setConstraints()
         
         tableView.dataSource = self
         tableView.delegate = self
-        
-        tableView.backgroundColor = .ypBlack
-        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        tableView.register(ImagesListCell.self, forCellReuseIdentifier: "ImagesListCell")
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(tableView)
-        
+    }
+    
+    // MARK: - UI Updates
+    
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
         ])
-        
-        self.tableView = tableView
     }
+    
+    // MARK: - Private Methods
+    
+    private func getImageName(for index: Int) -> String { "MockData/\(photosName[index])" }
 }
 
 // MARK: - Data Source Extension
@@ -78,10 +85,10 @@ extension ImagesListViewController: UITableViewDataSource {
 
 extension ImagesListViewController {
     private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        guard let image = UIImage(named: "MockData/\(photosName[indexPath.row])") else { return }
+        guard let image = UIImage(named: getImageName(for: indexPath.row)) else { return }
         
-        cell.cellImage?.image = image
-        cell.dateLabel?.text = dateFormatter.string(from: Date())
+        cell.cellImage.image = image
+        cell.dateLabel.text = dateFormatter.string(from: currentDate)
         cell.isLiked = indexPath.row % 2 == 0
     }
 }
@@ -92,7 +99,7 @@ extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let singleImageViewController = SingleImageViewController()
         
-        let image = UIImage(named: "MockData/\(photosName[indexPath.row])")
+        let image = UIImage(named: getImageName(for: indexPath.row))
         singleImageViewController.image = image
         
         singleImageViewController.modalPresentationStyle = .fullScreen
@@ -100,11 +107,10 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let image = UIImage(named: "MockData/\(photosName[indexPath.row])") else {
+        guard let image = UIImage(named: getImageName(for: indexPath.row)) else {
             return 0
         }
         
-        let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
         let imageWidth = image.size.width
         let scale = imageViewWidth / imageWidth

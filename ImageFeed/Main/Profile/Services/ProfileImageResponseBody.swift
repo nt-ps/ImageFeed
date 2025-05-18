@@ -15,9 +15,7 @@ struct ProfileImageResponseBody: Decodable {
     }
     
     enum ProfileImageCodingKeys: String, CodingKey {
-        case small
-        case medium
-        case large
+        case small, medium, large
     }
     
     // MARK: - Initializers
@@ -26,8 +24,8 @@ struct ProfileImageResponseBody: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let profileImageContainer = try container.nestedContainer(keyedBy: ProfileImageCodingKeys.self, forKey: .profileImage)
-        self.small = try profileImageContainer.decode(String.self, forKey: .small)
-        self.medium = try profileImageContainer.decode(String.self, forKey: .medium)
-        self.large = try profileImageContainer.decode(String.self, forKey: .large)
+        small = try profileImageContainer.decode(String.self, forKey: .small)
+        medium = try profileImageContainer.decode(String.self, forKey: .medium)
+        large = try profileImageContainer.decode(String.self, forKey: .large)
     }
 }

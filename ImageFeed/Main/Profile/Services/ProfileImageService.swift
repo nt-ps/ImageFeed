@@ -11,12 +11,6 @@ final class ProfileImageService {
     
     private(set) var avatarURL: String?
     
-    // MARK: - Private Enumeration
-    
-    private enum ProfileImageServiceError: Error {
-        case invalidRequest
-    }
-    
     // MARK: - Private Properties
 
     private let urlSession = URLSession.shared
@@ -83,13 +77,13 @@ final class ProfileImageService {
     
     private func makePublicProfileRequest(token: String, username: String) -> URLRequest? {
         guard var url = Constants.defaultBaseURL else {
-            print("[makePublicProfileRequest] Failed to get URL.")
+            print("[\(#function)] Failed to get URL.")
             return nil
         }
         url = url.appendingPathComponent("users/\(username)")
         
         var request: URLRequest = URLRequest(url: url)
-        request.httpMethod = "GET"
+        request.httpMethod = HTTPMethod.get
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
         return request

@@ -5,25 +5,62 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Views
     
-    private var profileImageView: UIImageView?
-    private var nameLabel: UILabel?
-    private var loginNameLabel: UILabel?
-    private var bioLabel: UILabel?
-    private var logoutButton: UIButton?
+    private lazy var profileImageView: UIImageView = {
+        let profileImageView = UIImageView()
+        profileImageView.image = UIImage(named: profileImageName)
+        profileImageView.contentMode = .scaleAspectFill
+        return profileImageView
+    } ()
+    
+    private lazy var nameLabel: UILabel = {
+        let nameLabel = UILabel()
+        nameLabel.font = UIFont.systemFont(ofSize: bigFontSize, weight: .bold)
+        nameLabel.textColor = .ypWhite
+        nameLabel.setCharacterSpacing(0.08)
+        return nameLabel
+    } ()
+    
+    private lazy var loginNameLabel: UILabel = {
+        let loginNameLabel = UILabel()
+        loginNameLabel.font = UIFont.systemFont(ofSize: smallFontSize, weight: .regular)
+        loginNameLabel.textColor = .ypGray
+        return loginNameLabel
+    } ()
+    
+    private lazy var bioLabel: UILabel = {
+        let bioLabel = UILabel()
+        bioLabel.font = UIFont.systemFont(ofSize: smallFontSize, weight: .regular)
+        bioLabel.textColor = .ypWhite
+        return bioLabel
+    } ()
+    
+    private lazy var logoutButton: UIButton = {
+        let logoutButton = UIButton(type: .custom)
+        logoutButton.setImage(UIImage(named: logoutButtonIconName), for: .normal)
+        logoutButton.addTarget(self, action: #selector(self.logoutButtonTap), for: .touchUpInside)
+        return logoutButton
+    } ()
+    
+    // MARK: - UI Properties
+    
+    private let mainTopOffset: CGFloat = 32
+    private let mainHorizontalOffset: CGFloat = 16
+    
+    private let profileImageName: String = "ProfileImageStub"
+    private let profileImageSize: Double = 70
+    
+    private let bigFontSize: Double = 23
+    private let smallFontSize: Double = 13
+    
+    private let logoutButtonIconName: String = "LogoutButtonIcon"
+    private let logoutButtonSize: Double = 44
     
     // MARK: - Private Properties
     
-    private let mainTopOffset: CGFloat = 32
-    private let mainLeadingOffset: CGFloat = 16
-    private let mainTrailingOffset: CGFloat = 16
-    
-    private let profileImageSize: Double = 70
-    
     private var profileImageServiceObserver: NSObjectProtocol?
-    
     private let imageCache = ImageCache.default
     
-    // MARK: - Overrides Methods
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,13 +68,10 @@ final class ProfileViewController: UIViewController {
         imageCache.clearMemoryCache()
         imageCache.clearDiskCache()
         
-        setView()
+        view.backgroundColor = .ypBlack
         
-        addProfileImageView()
-        addNameLabel()
-        addLoginNameLabel()
-        addBioLabel()
-        addLogoutButton()
+        view.addSubviews(profileImageView, nameLabel, loginNameLabel, bioLabel, logoutButton)
+        setConstraints()
         
         guard let profile = ProfileService.shared.profile else { return }
         updateProfileDetails(profile: profile)
@@ -54,24 +88,16 @@ final class ProfileViewController: UIViewController {
         updateProfileImage()
     }
     
-    // MARK: - Private Methods
+    // MARK: - Button Actions
     
     @objc
-    private func logoutButtonTap() { }
-    
-    private func setView() {
-        view.backgroundColor = .ypBlack
+    private func logoutButtonTap() {
+        // TODO: Добавить логику выхода из аккаунта.
     }
     
-    private func addProfileImageView() {
-        let profileImageView = UIImageView()
-        
-        profileImageView.image = UIImage(named: "ProfileImageStub")
-        profileImageView.contentMode = .scaleAspectFill
-        profileImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(profileImageView)
-        
+    // MARK: - UI Updates
+    
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             profileImageView.widthAnchor.constraint(equalToConstant: profileImageSize),
             profileImageView.heightAnchor.constraint(equalTo: profileImageView.widthAnchor),
@@ -81,133 +107,65 @@ final class ProfileViewController: UIViewController {
             ),
             profileImageView.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: mainLeadingOffset
-            )
-        ])
-        
-        self.profileImageView = profileImageView
-    }
-    
-    private func addNameLabel() {
-        guard let profileImageView else { return }
-        
-        let nameLabel = UILabel()
-        
-        nameLabel.font = UIFont.systemFont(ofSize: 23, weight: .bold)
-        nameLabel.textColor = .ypWhite
-        nameLabel.setCharacterSpacing(0.08)
-        nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(nameLabel)
-        
-        NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 8),
+                constant: mainHorizontalOffset
+            ),
+            
+            nameLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: mainHorizontalOffset / 2),
             nameLabel.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: mainLeadingOffset
+                constant: mainHorizontalOffset
             ),
             nameLabel.trailingAnchor.constraint(
                 greaterThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -mainLeadingOffset
-            )
-        ])
-        
-        self.nameLabel = nameLabel
-    }
-    
-    private func addLoginNameLabel() {
-        guard let nameLabel else { return }
-        
-        let loginNameLabel = UILabel()
-        
-        loginNameLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-        loginNameLabel.textColor = .ypGray
-        loginNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(loginNameLabel)
-        
-        NSLayoutConstraint.activate([
-            loginNameLabel.topAnchor.constraint(equalTo: nameLabel.lastBaselineAnchor, constant: 8),
+                constant: -mainHorizontalOffset
+            ),
+            
+            loginNameLabel.topAnchor.constraint(equalTo: nameLabel.lastBaselineAnchor, constant: mainHorizontalOffset / 2),
             loginNameLabel.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: mainLeadingOffset
+                constant: mainHorizontalOffset
             ),
             loginNameLabel.trailingAnchor.constraint(
                 greaterThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -mainLeadingOffset
-            )
-        ])
-        
-        self.loginNameLabel = loginNameLabel
-    }
-    
-    private func addBioLabel() {
-        guard let loginNameLabel else { return }
-        
-        let bioLabel = UILabel()
-        
-        bioLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-        bioLabel.textColor = .ypWhite
-        bioLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(bioLabel)
-        
-        NSLayoutConstraint.activate([
-            bioLabel.topAnchor.constraint(equalTo: loginNameLabel.bottomAnchor, constant: 8),
+                constant: -mainHorizontalOffset
+            ),
+            
+            bioLabel.topAnchor.constraint(equalTo: loginNameLabel.bottomAnchor, constant: mainHorizontalOffset / 2),
             bioLabel.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: mainLeadingOffset
+                constant: mainHorizontalOffset
             ),
             bioLabel.trailingAnchor.constraint(
                 greaterThanOrEqualTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -mainLeadingOffset
-            )
-        ])
-        
-        self.bioLabel = bioLabel
-    }
-    
-    private func addLogoutButton() {
-        guard let profileImageView else { return }
-        
-        let logoutButton = UIButton(type: .custom)
-        
-        logoutButton.setImage(UIImage(named: "LogoutButtonIcon"), for: .normal)
-        logoutButton.addTarget(self, action: #selector(self.logoutButtonTap), for: .touchUpInside)
-        logoutButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(logoutButton)
-        
-        NSLayoutConstraint.activate([
-            logoutButton.widthAnchor.constraint(equalToConstant: 44),
+                constant: -mainHorizontalOffset
+            ),
+            
+            logoutButton.widthAnchor.constraint(equalToConstant: logoutButtonSize),
             logoutButton.heightAnchor.constraint(equalTo: logoutButton.widthAnchor),
             logoutButton.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
             logoutButton.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -mainTrailingOffset + 2
+                constant: -mainHorizontalOffset + 2
             )
         ])
-        
-        self.logoutButton = logoutButton
     }
     
     private func updateProfileDetails(profile: Profile) {
-        nameLabel?.text = profile.name
-        loginNameLabel?.text = profile.loginName
-        bioLabel?.text = profile.bio
+        nameLabel.text = profile.name
+        loginNameLabel.text = profile.loginName
+        bioLabel.text = profile.bio
     }
     
     private func updateProfileImage() {
         guard
             let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL),
-            let profileImageView
+            let url = URL(string: profileImageURL)
         else { return }
         
         profileImageView.kf.indicatorType = .activity
         profileImageView.kf.setImage(
             with: url,
-            placeholder: UIImage(named: "ProfileImageStub")
+            placeholder: UIImage(named: profileImageName)
         )
         profileImageView.layer.cornerRadius = profileImageSize / 2
         profileImageView.layer.masksToBounds = true

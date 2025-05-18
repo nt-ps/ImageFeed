@@ -2,35 +2,11 @@ import UIKit
 
 final class SplashViewController: UIViewController {
     
-    // MARK: - Private Properties
-    
-    private var profileImageServiceObserver: NSObjectProtocol?
-    
-    // MARK: - Overrides Methods
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setView()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        if let token = OAuth2TokenStorage.token{
-            switchToTabBarController(token: token)
-        } else {
-            let navigationController = NavigationController()
-            navigationController.modalPresentationStyle = .fullScreen
-            present(navigationController, animated: true) { [weak self] in
-                navigationController.authViewController?.delegate = self
-            }
-        }
-    }
-    
-    // MARK: - Private Methods
-    
-    private func setView() {
         view.backgroundColor = .ypBlack
         
         let logoImageView = UIImageView()
@@ -47,26 +23,41 @@ final class SplashViewController: UIViewController {
         ])
     }
     
-    private func switchToTabBarController(token: String) {
-        fetchProfile(token: token)
-        
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { _ in
-                guard let window = UIApplication.shared.windows.first else {
-                    assertionFailure("[switchToTabBarController] Invalid Configuration.")
-                    return
-                }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
-                let tabBarController = TabBarController()
-                window.rootViewController = tabBarController
-            }
+        if let token = OAuth2TokenStorage.token{
+            switchToTabBarController(token: token)
+        } else {
+            switchToNavigationController()
+        }
     }
     
-    private func fetchProfile(token: String) {
+    // MARK: - UI Updates
+    
+    private func switchToTabBarController(token: String) {
+        fetchProfile(token: token) { 
+            guard let window = UIApplication.shared.windows.first else {
+                assertionFailure("[\(#function)] Invalid Configuration.")
+                return
+            }
+
+            let tabBarController = TabBarController()
+            window.rootViewController = tabBarController
+        }
+    }
+    
+    private func switchToNavigationController() {
+        let navigationController = NavigationController()
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true) { [weak self] in
+            navigationController.authViewController?.delegate = self
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    private func fetchProfile(token: String, completion: @escaping () -> Void) {
         UIBlockingProgressHUD.show()
         
         ProfileService.shared.fetchProfile(token) { result in
@@ -77,13 +68,13 @@ final class SplashViewController: UIViewController {
                     
                     switch result {
                     case .success:
-                        break
+                        completion()
                     case .failure(let error):
-                        print("[fetchProfile] Failed to get profile image URL: \(error.localizedDescription)")
+                        print("[\(#function)] Failed to get profile image URL: \(error.localizedDescription)")
                     }
                 }
             case .failure(let error):
-                print("[fetchProfile] Failed to get user profile: \(error.localizedDescription)")
+                print("[\(#function)] Failed to get user profile: \(error.localizedDescription)")
                 
                 UIBlockingProgressHUD.dismiss()
             }

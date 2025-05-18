@@ -7,13 +7,9 @@ struct ErrorViewModel {
     let buttonText: ButtonTextType
     let completion: (() -> Void)?
     
-    init(message: String, buttonText: ButtonTextType, completion: (() -> Void)?) {
+    init(message: String, buttonText: ButtonTextType = .ok, completion: (() -> Void)? = nil) {
         self.message = message
         self.buttonText = buttonText
         self.completion = completion
-    }
-    
-    init(message: String) {
-        self.init(message: message, buttonText: .ok, completion: nil)
     }
 }

@@ -7,27 +7,35 @@ final class WebViewViewController: UIViewController {
     
     var delegate: WebViewViewControllerDelegate?
     
+    // MARK: - Views
+    
+    private lazy var webView: WKWebView = WKWebView()
+    
+    private lazy var progressView: UIProgressView = {
+        let progressView = UIProgressView()
+        progressView.progressTintColor = .ypBlack
+        return progressView
+    } ()
+    
     // MARK: - Private Properties
     
     private var estimatedProgressObservation: NSKeyValueObservation?
     
-    // MARK: - Views
-    
-    private var webView: WKWebView?
-    private var progressView: UIProgressView?
-    
-    // MARK: - Overrides Methods
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setView()
-        addWebView()
-        addProgressView()
+        view.backgroundColor = .ypWhite
+        
+        view.addSubviews(webView, progressView)
+        setConstraints()
+        
+        webView.navigationDelegate = self
         
         loadAuthView()
         
-        estimatedProgressObservation = webView?.observe(
+        estimatedProgressObservation = webView.observe(
             \.estimatedProgress,
             options: [],
             changeHandler: { [weak self] _, _ in
@@ -36,51 +44,31 @@ final class WebViewViewController: UIViewController {
             })
     }
     
-    // MARK: - Private Methods
+    // MARK: - UI Updates
     
-    private func setView() {
-        view.backgroundColor = .ypWhite
-    }
-    
-    private func addWebView() {
-        let webView = WKWebView()
-        
-        webView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(webView)
-        
+    private func setConstraints() {
         NSLayoutConstraint.activate([
             webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             webView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-        
-        webView.navigationDelegate = self
-        
-        self.webView = webView
-    }
-    
-    private func addProgressView() {
-        let progressView = UIProgressView()
-        
-        progressView.progressTintColor = .ypBlack
-        progressView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(progressView)
-        
-        NSLayoutConstraint.activate([
+            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
             progressView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             progressView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             progressView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
-        
-        self.progressView = progressView
     }
+    
+    private func updateProgress() {
+        progressView.progress = Float(webView.estimatedProgress)
+        progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
+    }
+    
+    // MARK: - Private Methods
     
     private func loadAuthView() {
         guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
-            print("[loadAuthView] Failed to initialize URL components.")
+            print("[\(#function)] Failed to initialize URL components.")
             return
         }
         
@@ -92,23 +80,13 @@ final class WebViewViewController: UIViewController {
         ]
         
         guard let url = urlComponents.url else {
-            print("[loadAuthView] Failed to get URL.")
+            print("[\(#function)] Failed to get URL.")
             return
         }
         
         let request = URLRequest(url: url)
-        webView?.load(request)
+        webView.load(request)
         updateProgress()
-    }
-    
-    private func updateProgress() {
-        guard
-            let progressView = self.progressView,
-            let webView = self.webView
-        else { return }
-        
-        progressView.progress = Float(webView.estimatedProgress)
-        progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
     }
 }
 

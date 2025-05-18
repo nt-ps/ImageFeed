@@ -5,16 +5,14 @@ struct Profile {
     
     var loginName: String { "@\(username)" }
     
-    init(username: String, name: String, bio: String) {
+    init(
+        username: String = "username",
+        name: String = "Name",
+        bio: String = "Bio."
+    ) {
         self.username = username
         self.name = name
         self.bio = bio
-    }
-    
-    init() {
-        username = "username"
-        name = "Name"
-        bio = "Bio."
     }
 }
 

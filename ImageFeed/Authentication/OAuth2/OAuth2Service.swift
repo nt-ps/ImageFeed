@@ -6,12 +6,6 @@ final class OAuth2Service {
     
     static let shared = OAuth2Service()
     
-    // MARK: - Private Enumeration
-    
-    private enum OAuth2ServiceError: Error {
-        case invalidRequest
-    }
-    
     // MARK: - Private Properties
 
     private let urlSession = URLSession.shared
@@ -67,7 +61,7 @@ final class OAuth2Service {
     
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
-            print("[makeOAuthTokenRequest] Failed to initialize URL components.")
+            print("[\(#function)] Failed to initialize URL components.")
             return nil
         }
         
@@ -80,12 +74,12 @@ final class OAuth2Service {
         ]
         
         guard let url = urlComponents.url else {
-            print("[makeOAuthTokenRequest] Failed to get URL.")
+            print("[\(#function)] Failed to get URL.")
             return nil
         }
         
         var request: URLRequest = URLRequest(url: url)
-        request.httpMethod = "POST"
+        request.httpMethod = HTTPMethod.post
         return request
     }
 }

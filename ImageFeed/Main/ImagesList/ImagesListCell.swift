@@ -4,11 +4,44 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - Views
     
-    var cellImage: UIImageView?
-    var dateLabel: UILabel?
+    lazy var cellImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    } ()
     
-    private var containerView: UIView?
-    private var likeButton: UIButton?
+    lazy var dateLabel: UILabel = {
+        let dateLabel = UILabel()
+        dateLabel.font = UIFont.systemFont(ofSize: dateLabelFontSize, weight: .regular)
+        dateLabel.textColor = .ypWhite
+        dateLabel.setCharacterSpacing(0.08)
+        return dateLabel
+    } ()
+    
+    private lazy var containerView: UIView = {
+        let containerView = UIView()
+        containerView.backgroundColor = .ypWhite
+        containerView.layer.masksToBounds = true
+        containerView.layer.cornerRadius = containerViewCornerRadius
+        return containerView
+    } ()
+    
+    private lazy var likeButton: UIButton = {
+        let likeButton = UIButton(type: .custom)
+        likeButton.setImage(UIImage(named: likeButtonNoActiveIcon), for: .normal)
+        likeButton.layer.shadowColor = UIColor.ypBlack.cgColor
+        likeButton.layer.shadowOpacity = 0.1
+        likeButton.layer.shadowRadius = 4
+        likeButton.layer.shadowOffset = CGSize(width: 0, height: 1)
+        return likeButton
+    } ()
+    
+    private lazy var gradient: UIImageView = {
+        let gradient = UIImageView()
+        gradient.image = UIImage(named: gradientImageName)
+        gradient.contentMode = .scaleToFill
+        return gradient
+    } ()
     
     // MARK: - Static Properties
     
@@ -16,31 +49,46 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - Internal Properties
     
-    var isLiked: Bool {
-        get { likeValue }
-        set {
-            likeValue = newValue
-            let imageName = likeValue ? "LikeButtonIcon/Active" : "LikeButtonIcon/NoActive"
+    var isLiked: Bool? {
+        didSet {
+            guard let isLiked else { return }
+            let imageName = isLiked ? likeButtonActiveIcon : likeButtonNoActiveIcon
             guard let likeImage = UIImage(named: imageName) else { return }
-            likeButton?.setImage(likeImage, for: .normal)
+            likeButton.setImage(likeImage, for: .normal)
         }
     }
     
-    // MARK: - Private Properties
+    // MARK: - UI Properties
     
-    private var likeValue: Bool = false
+    private let containerViewCornerRadius: Double = 16
+    static let containerViewVerticalMargin: Double = 4
+    static let containerViewHorizontalMargin: Double = 16
+    
+    private let cellImageMinHeight: Double = 30
+    
+    private let likeButtonSize: Double = 44
+    private let likeButtonActiveIcon: String = "LikeButtonIcon/Active"
+    private let likeButtonNoActiveIcon: String = "LikeButtonIcon/NoActive"
+    
+    private let gradientImageName: String = "DarkGradientBackground"
+    private let gradientImageHeight: Double = 30
+    
+    private let dateLabelMargin: Double = 8
+    private let dateLabelFontSize: Double = 13
     
     // MARK: - Initializers
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        setView()
-        addContainer()
-        addImage()
-        addLikeButton()
-        addGradient()
-        addDateLabel()
+        backgroundColor = .clear
+        selectionStyle = .none
+        
+        containerView.addSubviews(cellImage, likeButton, gradient, dateLabel)
+        addSubviews(containerView)
+        setConstraints()
+        
+        isLiked = false
     }
     
     required init?(coder: NSCoder) {
@@ -48,114 +96,47 @@ final class ImagesListCell: UITableViewCell {
         print("ImagesListCell.init(coder:) has not been implemented")
     }
     
-    // MARK: - Private Methods
+    // MARK: - UI Updates
     
-    private func setView() {
-        backgroundColor = .clear
-        selectionStyle = .none
-    }
-    
-    private func addContainer() {
-        let containerView = UIView()
-        
-        containerView.backgroundColor = .ypWhite
-        containerView.layer.masksToBounds = true
-        containerView.layer.cornerRadius = 16
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        
-        addSubview(containerView)
-        
+    private func setConstraints() {
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: self.topAnchor, constant: 4),
-            containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -4),
-            containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16),
-            containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16)
-        ])
-        
-        self.containerView = containerView
-    }
-    
-    private func addImage() {
-        let imageView = UIImageView()
-        
-        imageView.contentMode = .scaleAspectFill
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        containerView?.addSubview(imageView)
-        
-        NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: self.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            imageView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
-            imageView.heightAnchor.constraint(equalToConstant: 30)
-        ])
-        
-        self.cellImage = imageView
-    }
-    
-    private func addLikeButton() {
-        let likeButton = UIButton(type: .custom)
-        
-        likeButton.setImage(UIImage(named: "LikeButtonIcon/NoActive"), for: .normal)
-        likeButton.layer.shadowColor = UIColor.ypBlack.cgColor
-        likeButton.layer.shadowOpacity = 0.1
-        likeButton.layer.shadowRadius = 4
-        likeButton.layer.shadowOffset = CGSize(width: 0, height: 1)
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        guard let containerView else { return }
-        
-        containerView.addSubview(likeButton)
-        
-        NSLayoutConstraint.activate([
-            likeButton.widthAnchor.constraint(equalToConstant: 44),
+            containerView.topAnchor.constraint(
+                equalTo: self.topAnchor,
+                constant: ImagesListCell.containerViewVerticalMargin
+            ),
+            containerView.bottomAnchor.constraint(
+                equalTo: self.bottomAnchor,
+                constant: -ImagesListCell.containerViewVerticalMargin
+            ),
+            containerView.leadingAnchor.constraint(
+                equalTo: self.leadingAnchor,
+                constant: ImagesListCell.containerViewHorizontalMargin
+            ),
+            containerView.trailingAnchor.constraint(
+                equalTo: self.trailingAnchor,
+                constant: -ImagesListCell.containerViewHorizontalMargin
+            ),
+            
+            cellImage.topAnchor.constraint(equalTo: self.topAnchor),
+            cellImage.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+            cellImage.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            cellImage.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            cellImage.heightAnchor.constraint(equalToConstant: cellImageMinHeight),
+            
+            likeButton.widthAnchor.constraint(equalToConstant: likeButtonSize),
             likeButton.heightAnchor.constraint(equalTo: likeButton.widthAnchor),
             likeButton.leadingAnchor.constraint(greaterThanOrEqualTo: containerView.leadingAnchor),
             likeButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            likeButton.topAnchor.constraint(equalTo: containerView.topAnchor)
-        ])
-        
-        self.likeButton = likeButton
-    }
-    
-    private func addGradient() {
-        let gradient = UIImageView()
-        
-        gradient.image = UIImage(named: "DarkGradientBackground")
-        gradient.contentMode = .scaleToFill
-        gradient.translatesAutoresizingMaskIntoConstraints = false
-        
-        guard let containerView else { return }
-        
-        containerView.addSubview(gradient)
-        
-        NSLayoutConstraint.activate([
-            gradient.heightAnchor.constraint(equalToConstant: 30),
+            likeButton.topAnchor.constraint(equalTo: containerView.topAnchor),
+            
+            gradient.heightAnchor.constraint(equalToConstant: gradientImageHeight),
             gradient.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             gradient.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            gradient.bottomAnchor.constraint(equalTo: containerView.bottomAnchor)
+            gradient.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            
+            dateLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: dateLabelMargin),
+            dateLabel.trailingAnchor.constraint(greaterThanOrEqualTo: containerView.trailingAnchor, constant: dateLabelMargin),
+            dateLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -dateLabelMargin)
         ])
-    }
-    
-    private func addDateLabel() {
-        let dateLabel = UILabel()
-        
-        dateLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
-        dateLabel.textColor = .ypWhite
-        dateLabel.setCharacterSpacing(0.08)
-        dateLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        guard let containerView else { return }
-        
-        containerView.addSubview(dateLabel)
-        
-        NSLayoutConstraint.activate([
-            dateLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
-            dateLabel.trailingAnchor.constraint(greaterThanOrEqualTo: containerView.trailingAnchor, constant: 8),
-            dateLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -8)
-        ])
-        
-        self.dateLabel = dateLabel
     }
 }

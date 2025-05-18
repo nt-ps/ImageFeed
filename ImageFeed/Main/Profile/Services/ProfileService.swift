@@ -9,12 +9,6 @@ final class ProfileService {
     
     private(set) var profile: Profile?
     
-    // MARK: - Private Enumeration
-    
-    private enum ProfileServiceError: Error {
-        case invalidRequest
-    }
-    
     // MARK: - Private Properties
 
     private let urlSession = URLSession.shared
@@ -70,13 +64,13 @@ final class ProfileService {
     
     private func makeUserProfileRequest(token: String) -> URLRequest? {
         guard var url = Constants.defaultBaseURL else {
-            print("[makeUserProfileRequest] Failed to get URL.")
+            print("[\(#function)] Failed to get URL.")
             return nil
         }
         url = url.appendingPathComponent("me")
         
         var request: URLRequest = URLRequest(url: url)
-        request.httpMethod = "GET"
+        request.httpMethod = HTTPMethod.get
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
         return request
