@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ImagesListViewController: UIViewController {
     
@@ -23,16 +24,19 @@ final class ImagesListViewController: UIViewController {
     
     // MARK: - Private Properties
     
-    private let photosName: [String] = Array(0..<20).map{ "\($0)" }
-
+    private var photos: [Photo] = []
+    
+    private let imagesListService = ImagesListService.shared
+    private var imagesListServiceObserver: NSObjectProtocol?
+    
+    private lazy var token = OAuth2TokenStorage.token ?? ""
+    
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd MMMM yyyy"
         formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     } ()
-    
-    private let currentDate = Date()
     
     // MARK: - Lifecycle
     
@@ -45,6 +49,17 @@ final class ImagesListViewController: UIViewController {
         
         tableView.dataSource = self
         tableView.delegate = self
+        
+        fetchNextPage()
+        
+        imagesListServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ImagesListService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                self?.updateTableViewAnimated()
+            }
     }
     
     // MARK: - UI Updates
@@ -60,14 +75,32 @@ final class ImagesListViewController: UIViewController {
     
     // MARK: - Private Methods
     
-    private func getImageName(for index: Int) -> String { "MockData/\(photosName[index])" }
+    private func fetchNextPage(){
+        imagesListService.fetchPhotosNextPage(token) { result in
+            // TODO: Выводить алерт с ошибкой загрузки.
+        }
+    }
+    
+    func updateTableViewAnimated() {
+        let oldCount = photos.count
+        let newCount = imagesListService.photos.count
+        photos = imagesListService.photos
+        if oldCount != newCount {
+            tableView.performBatchUpdates {
+                let indexPaths = (oldCount..<newCount).map { i in
+                    IndexPath(row: i, section: 0)
+                }
+                tableView.insertRows(at: indexPaths, with: .automatic)
+            } completion: { _ in }
+        }
+    }
 }
 
 // MARK: - Data Source Extension
 
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        photosName.count
+        photos.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -83,28 +116,26 @@ extension ImagesListViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        // Вызывать функцию fetchPhotosNextPage() мы будем из этого метода.
-        
-        // Метод tableView(_:, willDisplay:, forRowAt:) вызывается прямо перед тем,
-        // как ячейка таблицы будет показана на экране.
-        // В этом методе можно проверить условие indexPath.row + 1 == photos.count,
-        // и если оно верно — вызывать fetchPhotosNextPage().
-        
-        // Отметим, что этот метод может вызываться для одной
-        // и той же ячейки множество раз (иногда десятки раз).
-        // Поэтому нужно сделать так, чтобы многократные
-        // вызовы fetchPhotosNextPage() были «дешёвыми» по ресурсам
-        // и не приводили к прерыванию текущего сетевого запроса.
+        if indexPath.row + 1 == photos.count {
+            fetchNextPage()
+        }
     }
 }
 
 extension ImagesListViewController {
     private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        guard let image = UIImage(named: getImageName(for: indexPath.row)) else { return }
+        let photo = photos[indexPath.row]
         
-        cell.cellImage.image = image
-        cell.dateLabel.text = dateFormatter.string(from: currentDate)
-        cell.isLiked = indexPath.row % 2 == 0
+        guard
+            let url = URL(string: photo.thumbImageURL),
+            let date = photo.createdAt
+        else { return }
+        
+        cell.cellImage.kf.indicatorType = .activity
+        cell.cellImage.kf.setImage(with: url)
+        
+        cell.dateLabel.text = dateFormatter.string(from: date)
+        cell.isLiked = photo.isLiked
     }
 }
 
@@ -112,24 +143,23 @@ extension ImagesListViewController {
 
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard
+            let imageListCell = tableView.cellForRow(at: indexPath) as? ImagesListCell,
+            let preview = imageListCell.cellImage.image
+        else { return }
+        
         let singleImageViewController = SingleImageViewController()
-        
-        let image = UIImage(named: getImageName(for: indexPath.row))
-        singleImageViewController.image = image
-        
+        singleImageViewController.setImage(from: photos[indexPath.row], placeholder: preview)
         singleImageViewController.modalPresentationStyle = .fullScreen
         present(singleImageViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let image = UIImage(named: getImageName(for: indexPath.row)) else {
-            return 0
-        }
-        
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
-        let imageWidth = image.size.width
+        let photo = photos[indexPath.row]
+        let imageWidth = photo.size.width
         let scale = imageViewWidth / imageWidth
-        let cellHeight = image.size.height * scale + imageInsets.top + imageInsets.bottom
+        let cellHeight = photo.size.height * scale + imageInsets.top + imageInsets.bottom
         return cellHeight
     }
 }

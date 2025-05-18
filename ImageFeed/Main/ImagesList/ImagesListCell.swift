@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
     
@@ -94,6 +95,13 @@ final class ImagesListCell: UITableViewCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         print("ImagesListCell.init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Overrided methods
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellImage.kf.cancelDownloadTask()
     }
     
     // MARK: - UI Updates
