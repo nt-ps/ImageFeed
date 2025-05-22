@@ -22,10 +22,12 @@ final class ImagesListService {
         return url
     }()
     
+    private var photoPageTask: URLSessionTask?
+    
     private let perPage: Int = 10
     private var lastLoadedPage: Int = 0
     
-    private var task: URLSessionTask?
+    private var likePhotoTasks: [String: URLSessionTask] = [:]
     
     // MARK: - Initializers
     
@@ -35,7 +37,7 @@ final class ImagesListService {
     
     func fetchPhotosNextPage(completion: @escaping (Result<Int, Error>) -> Void) {
         assert(Thread.isMainThread)
-        if task != nil {
+        if photoPageTask != nil {
             completion(.failure(ImagesListServiceError.tooManyRequests))
             return
         }
@@ -68,11 +70,55 @@ final class ImagesListService {
                         completion(.failure(error))
                     }
                     
-                    self.task = nil
+                    self.photoPageTask = nil
                 }
             })
         
-        self.task = task
+        self.photoPageTask = task
+        task.resume()
+    }
+    
+    func changeLike(photoId: String, isLiked: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
+        assert(Thread.isMainThread)
+        if likePhotoTasks[photoId] != nil {
+            completion(.failure(ImagesListServiceError.tooManyRequests))
+            return
+        }
+        
+        guard let request = makeLikePhotoRequest(photoId: photoId, isLiked: isLiked) else {
+            completion(.failure(ImagesListServiceError.invalidRequest))
+            return
+        }
+        
+        let task = urlSession.data(
+            for: request,
+            completion: { [weak self] (result: Result<Data, Error>) in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success:
+                        guard let self else { return }
+                        if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
+                            let photo = self.photos[index]
+                            self.photos[index] = Photo(
+                                id: photo.id,
+                                size: photo.size,
+                                createdAt: photo.createdAt,
+                                welcomeDescription: photo.welcomeDescription,
+                                thumbImageURL: photo.thumbImageURL,
+                                largeImageURL: photo.largeImageURL,
+                                isLiked: !photo.isLiked
+                            )
+                        }
+                        completion(.success(()))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
+                    
+                    self?.likePhotoTasks.removeValue(forKey: photoId)
+                }
+            })
+        
+        self.likePhotoTasks[photoId] = task
         task.resume()
     }
     
@@ -104,6 +150,27 @@ final class ImagesListService {
         
         var request: URLRequest = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        return request
+    }
+    
+    private func makeLikePhotoRequest(photoId: String, isLiked: Bool) -> URLRequest? {
+        guard var url = mainURL else {
+            print("[\(#function)] Failed to initialize URL components.")
+            return nil
+        }
+        
+        url = url.appendingPathComponent(photoId)
+        url = url.appendingPathComponent("like")
+        
+        guard let token = OAuth2TokenStorage.token else {
+            print("[\(#function)] Failed to get OAuth2 token.")
+            return nil
+        }
+        
+        var request: URLRequest = URLRequest(url: url)
+        request.httpMethod = isLiked ? HTTPMethod.post : HTTPMethod.delete
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         
         return request
