@@ -22,7 +22,7 @@ final class AlertPresenter {
             alert.addAction(action)
         }
         
-        let cancel = UIAlertAction(title: model.cancelButton.title, style: .default) { _ in
+        let cancel = UIAlertAction(title: model.cancelButton.title, style: .cancel) { _ in
             guard let completion = model.cancelButton.action else { return }
             completion()
         }

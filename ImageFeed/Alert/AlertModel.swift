@@ -1,9 +1,4 @@
-struct AlertModel {
-    struct AlertButton {
-        let title: String
-        let action: (() -> Void)?
-    }
-    
+struct AlertModel {    
     let title: String
     let message: String
     let actionButton: AlertButton?
@@ -17,7 +12,7 @@ extension AlertModel {
         
         if let action = errorModel.action {
             actionButton = AlertButton(title: errorModel.buttonText, action: action)
-            cancelButton = AlertButton(title: AlertButtonConstants.cancel, action: nil)
+            cancelButton = AlertButton(title: AlertButtonTitle.cancel, action: nil)
         } else {
             actionButton = nil
             cancelButton = AlertButton(title: errorModel.buttonText, action: nil)

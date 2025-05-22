@@ -15,4 +15,8 @@ final class OAuth2TokenStorage {
     private enum Keys: String {
         case accessToken
     }
+    
+    static func remove() {
+        storage.removeObject(forKey: Keys.accessToken.rawValue)
+    }
 }

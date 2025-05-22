@@ -5,7 +5,7 @@ struct ErrorViewModel {
     
     init(
         message: String,
-        buttonText: String = AlertButtonConstants.ok,
+        buttonText: String = AlertButtonTitle.ok,
         action: (() -> Void)? = nil
     ) {
         self.message = message

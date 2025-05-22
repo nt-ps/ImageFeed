@@ -31,7 +31,7 @@ final class ImagesListService {
     
     // MARK: - Initializers
     
-    private init() {}
+    private init() { }
     
     // MARK: - Internal Methods
     
@@ -121,6 +121,11 @@ final class ImagesListService {
         
         self.likePhotoTasks[photoId] = task
         task.resume()
+    }
+    
+    func reset() {
+        photos.removeAll()
+        lastLoadedPage = 0;
     }
     
     // MARK: - Private Methods

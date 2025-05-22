@@ -103,7 +103,7 @@ final class SingleImageViewController: UIViewController {
                 
                 let errorViewModel = ErrorViewModel(
                     message: "Попробовать ещё раз?",
-                    buttonText: AlertButtonConstants.again) { [weak self] in
+                    buttonText: AlertButtonTitle.again) { [weak self] in
                         self?.loadImage(url: url, placeholder: placeholder)
                     }
                 
