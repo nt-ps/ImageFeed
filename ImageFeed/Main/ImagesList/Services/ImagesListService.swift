@@ -94,9 +94,10 @@ final class ImagesListService {
             for: request,
             completion: { [weak self] (result: Result<Data, Error>) in
                 DispatchQueue.main.async {
+                    guard let self else { return }
+                    
                     switch result {
                     case .success:
-                        guard let self else { return }
                         if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
                             let photo = self.photos[index]
                             self.photos[index] = Photo(
@@ -114,7 +115,7 @@ final class ImagesListService {
                         completion(.failure(error))
                     }
                     
-                    self?.likePhotoTasks.removeValue(forKey: photoId)
+                    self.likePhotoTasks.removeValue(forKey: photoId)
                 }
             })
         

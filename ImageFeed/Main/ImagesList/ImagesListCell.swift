@@ -34,6 +34,7 @@ final class ImagesListCell: UITableViewCell {
         likeButton.layer.shadowOpacity = 0.1
         likeButton.layer.shadowRadius = 4
         likeButton.layer.shadowOffset = CGSize(width: 0, height: 1)
+        likeButton.addTarget(self, action: #selector(self.likeButtonTap), for: .touchUpInside)
         return likeButton
     } ()
     
@@ -49,6 +50,8 @@ final class ImagesListCell: UITableViewCell {
     static let reuseIdentifier = "ImagesListCell"
     
     // MARK: - Internal Properties
+    
+    weak var delegate: ImagesListCellDelegate?
     
     var image: UIImage? { cellImage.image }
     
@@ -124,8 +127,9 @@ final class ImagesListCell: UITableViewCell {
         backgroundColor = .clear
         selectionStyle = .none
         
-        containerView.addSubviews(cellImage, likeButton, gradient, dateLabel)
+        containerView.addSubviews(cellImage, gradient, dateLabel)
         addSubviews(containerView)
+        contentView.addSubviews(likeButton)
         setConstraints()
         
         isLiked = false
@@ -141,6 +145,13 @@ final class ImagesListCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         cellImage.kf.cancelDownloadTask()
+    }
+    
+    // MARK: - Button Actions
+    
+    @objc
+    private func likeButtonTap() {
+        delegate?.imageListCellDidTapLike(self)
     }
     
     // MARK: - UI Updates
