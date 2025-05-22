@@ -46,6 +46,10 @@ final class SingleImageViewController: UIViewController {
     
     private let maxZoomScale: Double = 1.25
     
+    // MARK: - Alert
+    
+    private var alertPresenter: AlertPresenter?
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -58,27 +62,8 @@ final class SingleImageViewController: UIViewController {
         setConstraints()
         
         scrollView.delegate = self
-    }
-    
-    // MARK: - Internal Methods
-    
-    func setImage(from photo: Photo, placeholder: UIImage) {
-        setUserInteraction(to: false)
-        rescaleAndCenterImageInScrollView(imageSize: placeholder.size)
         
-        guard let url = URL(string: photo.largeImageURL) else { return }
-
-        imageView.kf.indicatorType = .activity
-        imageView.kf.setImage(with: url, placeholder: placeholder) { [weak self] result in
-            switch result{
-            case .success(let data):
-                self?.setUserInteraction(to: true)
-                self?.rescaleAndCenterImageInScrollView(imageSize: data.image.size)
-            case .failure:
-                // TODO: Вывести алерт с ошибкой.
-                break
-            }
-        }
+        alertPresenter = AlertPresenter(delegate: self)
     }
     
     // MARK: - Button Actions
@@ -97,6 +82,35 @@ final class SingleImageViewController: UIViewController {
     }
     
     // MARK: - UI Updates
+    
+    func setImage(from photo: Photo, placeholder: UIImage) {
+        setUserInteraction(to: false)
+        rescaleAndCenterImageInScrollView(imageSize: placeholder.size)
+        
+        guard let url = URL(string: photo.largeImageURL) else { return }
+        loadImage(url: url, placeholder: placeholder)
+    }
+    
+    private func loadImage(url: URL, placeholder: UIImage) {
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: url, placeholder: placeholder) { [weak self] result in
+            switch result{
+            case .success(let data):
+                self?.setUserInteraction(to: true)
+                self?.rescaleAndCenterImageInScrollView(imageSize: data.image.size)
+            case .failure(let error):
+                print("[\(#function)] Failed to download full image: \(error.localizedDescription).")
+                
+                let errorViewModel = ErrorViewModel(
+                    message: "Попробовать ещё раз?",
+                    buttonText: AlertButtonConstants.again) { [weak self] in
+                        self?.loadImage(url: url, placeholder: placeholder)
+                    }
+                
+                self?.show(error: errorViewModel)
+            }
+        }
+    }
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
@@ -136,6 +150,11 @@ final class SingleImageViewController: UIViewController {
         scrollView.isUserInteractionEnabled = value
         sharingButton.isUserInteractionEnabled = value
     }
+    
+    private func show(error model: ErrorViewModel) {
+        let alertModel = AlertModel(from: model)
+        alertPresenter?.show(alert: alertModel)
+    }
 }
 
 extension SingleImageViewController: UIScrollViewDelegate {
@@ -153,5 +172,13 @@ extension SingleImageViewController: UIScrollViewDelegate {
             bottom: verticalPadding,
             right: horizontalPadding
         )
+    }
+}
+
+
+extension SingleImageViewController: AlertPresenterDelegate {
+    func didReceiveAlert(alert: UIAlertController?) {
+        guard let alert else { return }
+        present(alert, animated: true, completion: nil)
     }
 }
