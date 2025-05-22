@@ -5,13 +5,13 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - Views
     
-    lazy var cellImage: UIImageView = {
+    private lazy var cellImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = cellImageContentMode
         return imageView
     } ()
     
-    lazy var dateLabel: UILabel = {
+    private lazy var dateLabel: UILabel = {
         let dateLabel = UILabel()
         dateLabel.font = UIFont.systemFont(ofSize: dateLabelFontSize, weight: .regular)
         dateLabel.textColor = .ypWhite
@@ -21,7 +21,7 @@ final class ImagesListCell: UITableViewCell {
     
     private lazy var containerView: UIView = {
         let containerView = UIView()
-        containerView.backgroundColor = .ypWhite
+        containerView.backgroundColor = .ypWhiteA50
         containerView.layer.masksToBounds = true
         containerView.layer.cornerRadius = containerViewCornerRadius
         return containerView
@@ -50,6 +50,34 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - Internal Properties
     
+    var image: UIImage? { cellImage.image }
+    
+    var imageURL: URL? {
+        didSet {
+            guard let imageURL else { return }
+            
+            cellImage.kf.cancelDownloadTask()
+            
+            cellImage.contentMode = .center
+            cellImage.kf.indicatorType = .none
+            cellImage.kf.setImage(
+                with: imageURL,
+                placeholder: cellImagePlaceholder,
+                completionHandler: { [weak self] result in
+                    guard let self else { return }
+                    self.cellImage.contentMode = self.cellImageContentMode
+                }
+            )
+        }
+    }
+    
+    var date: Date? {
+        didSet {
+            guard let date else { return }
+            dateLabel.text = dateFormatter.string(from: date)
+        }
+    }
+    
     var isLiked: Bool? {
         didSet {
             guard let isLiked else { return }
@@ -61,11 +89,13 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - UI Properties
     
-    private let containerViewCornerRadius: Double = 16
     static let containerViewVerticalMargin: Double = 4
     static let containerViewHorizontalMargin: Double = 16
+    private let containerViewCornerRadius: Double = 16
     
     private let cellImageMinHeight: Double = 30
+    private let cellImagePlaceholder: UIImage? = UIImage(named: "ImageStub")
+    private let cellImageContentMode: ContentMode = .scaleAspectFit
     
     private let likeButtonSize: Double = 44
     private let likeButtonActiveIcon: String = "LikeButtonIcon/Active"
@@ -76,6 +106,15 @@ final class ImagesListCell: UITableViewCell {
     
     private let dateLabelMargin: Double = 8
     private let dateLabelFontSize: Double = 13
+    
+    // MARK: - Private Properties
+    
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMMM yyyy"
+        formatter.locale = Locale(identifier: "ru_RU")
+        return formatter
+    } ()
     
     // MARK: - Initializers
     
@@ -142,9 +181,18 @@ final class ImagesListCell: UITableViewCell {
             gradient.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             gradient.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             
-            dateLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: dateLabelMargin),
-            dateLabel.trailingAnchor.constraint(greaterThanOrEqualTo: containerView.trailingAnchor, constant: dateLabelMargin),
-            dateLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -dateLabelMargin)
+            dateLabel.leadingAnchor.constraint(
+                equalTo: containerView.leadingAnchor,
+                constant: dateLabelMargin
+            ),
+            dateLabel.trailingAnchor.constraint(
+                greaterThanOrEqualTo: containerView.trailingAnchor,
+                constant: dateLabelMargin
+            ),
+            dateLabel.bottomAnchor.constraint(
+                equalTo: containerView.bottomAnchor,
+                constant: -dateLabelMargin
+            )
         ])
     }
 }

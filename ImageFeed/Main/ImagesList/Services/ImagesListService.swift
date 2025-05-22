@@ -33,7 +33,7 @@ final class ImagesListService {
     
     // MARK: - Internal Methods
     
-    func fetchPhotosNextPage(_ token: String, completion: @escaping (Result<Int, Error>) -> Void) {
+    func fetchPhotosNextPage(completion: @escaping (Result<Int, Error>) -> Void) {
         assert(Thread.isMainThread)
         if task != nil {
             completion(.failure(ImagesListServiceError.tooManyRequests))
@@ -42,7 +42,7 @@ final class ImagesListService {
         
         let currentPageNumber = lastLoadedPage + 1
         
-        guard let request = makePhotosListRequest(token: token, pageNumber: currentPageNumber) else {
+        guard let request = makePhotosListRequest(pageNumber: currentPageNumber) else {
             completion(.failure(ImagesListServiceError.invalidRequest))
             return
         }
@@ -78,7 +78,7 @@ final class ImagesListService {
     
     // MARK: - Private Methods
     
-    private func makePhotosListRequest(token: String, pageNumber: Int) -> URLRequest? {
+    private func makePhotosListRequest(pageNumber: Int) -> URLRequest? {
         guard
             let mainURL,
             var urlComponents = URLComponents(url: mainURL, resolvingAgainstBaseURL: true)
@@ -94,6 +94,11 @@ final class ImagesListService {
         
         guard let url = urlComponents.url else {
             print("[\(#function)] Failed to get URL.")
+            return nil
+        }
+        
+        guard let token = OAuth2TokenStorage.token else {
+            print("[\(#function)] Failed to get OAuth2 token.")
             return nil
         }
         

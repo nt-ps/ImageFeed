@@ -20,7 +20,8 @@ final class ImagesListViewController: UIViewController {
         top: ImagesListCell.containerViewVerticalMargin,
         left: ImagesListCell.containerViewHorizontalMargin,
         bottom: ImagesListCell.containerViewVerticalMargin,
-        right: ImagesListCell.containerViewHorizontalMargin)
+        right: ImagesListCell.containerViewHorizontalMargin
+    )
     
     // MARK: - Private Properties
     
@@ -28,15 +29,6 @@ final class ImagesListViewController: UIViewController {
     
     private let imagesListService = ImagesListService.shared
     private var imagesListServiceObserver: NSObjectProtocol?
-    
-    private lazy var token = OAuth2TokenStorage.token ?? ""
-    
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd MMMM yyyy"
-        formatter.locale = Locale(identifier: "ru_RU")
-        return formatter
-    } ()
     
     // MARK: - Lifecycle
     
@@ -76,7 +68,7 @@ final class ImagesListViewController: UIViewController {
     // MARK: - Private Methods
     
     private func fetchNextPage(){
-        imagesListService.fetchPhotosNextPage(token) { result in
+        imagesListService.fetchPhotosNextPage() { result in
             // TODO: Выводить алерт с ошибкой загрузки.
         }
     }
@@ -125,16 +117,8 @@ extension ImagesListViewController: UITableViewDataSource {
 extension ImagesListViewController {
     private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         let photo = photos[indexPath.row]
-        
-        guard
-            let url = URL(string: photo.thumbImageURL),
-            let date = photo.createdAt
-        else { return }
-        
-        cell.cellImage.kf.indicatorType = .activity
-        cell.cellImage.kf.setImage(with: url)
-        
-        cell.dateLabel.text = dateFormatter.string(from: date)
+        cell.imageURL = URL(string: photo.thumbImageURL)
+        cell.date = photo.createdAt
         cell.isLiked = photo.isLiked
     }
 }
@@ -145,7 +129,7 @@ extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard
             let imageListCell = tableView.cellForRow(at: indexPath) as? ImagesListCell,
-            let preview = imageListCell.cellImage.image
+            let preview = imageListCell.image
         else { return }
         
         let singleImageViewController = SingleImageViewController()
