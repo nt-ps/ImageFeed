@@ -76,8 +76,11 @@ final class ImagesListCell: UITableViewCell {
     
     var date: Date? {
         didSet {
-            guard let date else { return }
-            dateLabel.text = dateFormatter.string(from: date)
+            if let date {
+                dateLabel.text = dateFormatter.string(from: date)
+            } else {
+                dateLabel.text = ""
+            }
         }
     }
     

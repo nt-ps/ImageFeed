@@ -30,6 +30,10 @@ final class ImagesListViewController: UIViewController {
     private let imagesListService = ImagesListService.shared
     private var imagesListServiceObserver: NSObjectProtocol?
     
+    // MARK: - Alert
+    
+    private var alertPresenter: AlertPresenter?
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -41,6 +45,8 @@ final class ImagesListViewController: UIViewController {
         
         tableView.dataSource = self
         tableView.delegate = self
+        
+        alertPresenter = AlertPresenter(delegate: self)
         
         fetchNextPage()
         
@@ -65,15 +71,7 @@ final class ImagesListViewController: UIViewController {
         ])
     }
     
-    // MARK: - Private Methods
-    
-    private func fetchNextPage(){
-        imagesListService.fetchPhotosNextPage() { result in
-            // TODO: Выводить алерт с ошибкой загрузки.
-        }
-    }
-    
-    func updateTableViewAnimated() {
+    private func updateTableViewAnimated() {
         let oldCount = photos.count
         let newCount = imagesListService.photos.count
         photos = imagesListService.photos
@@ -84,6 +82,33 @@ final class ImagesListViewController: UIViewController {
                 }
                 tableView.insertRows(at: indexPaths, with: .automatic)
             } completion: { _ in }
+        }
+    }
+    
+    private func show(error model: ErrorViewModel) {
+        let alertModel = AlertModel(from: model)
+        alertPresenter?.show(alert: alertModel)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func fetchNextPage(){
+        imagesListService.fetchPhotosNextPage() { [weak self] result in
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                print("[\(#function)] Failed to load photos page: \(error.localizedDescription).")
+                
+                let errorViewModel = ErrorViewModel(
+                    message: "Попробовать ещё раз?",
+                    buttonText: AlertButtonTitle.again
+                ) { [weak self] in
+                    self?.fetchNextPage()
+                }
+                
+                self?.show(error: errorViewModel)
+            }
         }
     }
 }
@@ -161,18 +186,39 @@ extension ImagesListViewController: ImagesListCellDelegate {
         UIBlockingProgressHUD.show()
         
         imagesListService.changeLike(photoId: photo.id, isLiked: newLikeValue) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
             guard let self else { return }
             
             switch result {
             case .success:
                 self.photos[index] = imagesListService.photos[index]
                 cell.isLiked = newLikeValue
-            case .failure:
-                // TODO: Вывести алерт с ошибкой.
-                break
+            case .failure(let error):
+                print("[\(#function)] Failed to change like: \(error.localizedDescription).")
+                
+                let errorViewModel = ErrorViewModel(
+                    message: "Попробовать ещё раз?",
+                    buttonText: AlertButtonTitle.again
+                ) { [weak self] in
+                    self?.imageListCellDidTapLike(cell)
+                }
+                
+                self.show(error: errorViewModel)
             }
-            
-            UIBlockingProgressHUD.dismiss()
         }
+    }
+    
+    private func changeLike() {
+        
+    }
+}
+
+// MARK: - Alert Presenter Delegate Extension
+
+extension ImagesListViewController: AlertPresenterDelegate {
+    func didReceiveAlert(alert: UIAlertController?) {
+        guard let alert else { return }
+        present(alert, animated: true, completion: nil)
     }
 }

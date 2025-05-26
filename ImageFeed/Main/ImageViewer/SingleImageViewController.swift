@@ -102,10 +102,11 @@ final class SingleImageViewController: UIViewController {
                 print("[\(#function)] Failed to download full image: \(error.localizedDescription).")
                 
                 let errorViewModel = ErrorViewModel(
-                    message: "Попробовать ещё раз?",
-                    buttonText: AlertButtonTitle.again) { [weak self] in
-                        self?.loadImage(url: url, placeholder: placeholder)
-                    }
+                    message: "Не удалось загрузить фотографию. Попробовать ещё раз?",
+                    buttonText: AlertButtonTitle.again
+                ) { [weak self] in
+                    self?.loadImage(url: url, placeholder: placeholder)
+                }
                 
                 self?.show(error: errorViewModel)
             }
