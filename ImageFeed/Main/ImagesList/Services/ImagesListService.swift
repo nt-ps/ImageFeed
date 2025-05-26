@@ -62,8 +62,7 @@ final class ImagesListService {
                         self.lastLoadedPage = currentPageNumber
                         NotificationCenter.default.post(
                             name: ImagesListService.didChangeNotification,
-                            object: self,
-                            //userInfo: ["URL": avatarURL]
+                            object: self
                         )
                         completion(.success(self.photos.count))
                     case .failure(let error):
