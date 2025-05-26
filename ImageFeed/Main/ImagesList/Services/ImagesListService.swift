@@ -58,7 +58,8 @@ final class ImagesListService {
                     
                     switch result {
                     case .success(let data):
-                        data.forEach { self.photos.append(Photo(from: $0)) }
+                        let receivedPhotos = data.map { Photo(from: $0) }
+                        self.photos.append(contentsOf: receivedPhotos)
                         self.lastLoadedPage = currentPageNumber
                         NotificationCenter.default.post(
                             name: ImagesListService.didChangeNotification,
