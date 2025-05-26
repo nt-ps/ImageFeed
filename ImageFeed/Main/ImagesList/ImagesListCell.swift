@@ -49,6 +49,12 @@ final class ImagesListCell: UITableViewCell {
     
     static let reuseIdentifier = "ImagesListCell"
     
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMMM yyyy"
+        return formatter
+    } ()
+    
     // MARK: - Internal Properties
     
     weak var delegate: ImagesListCellDelegate?
@@ -77,7 +83,7 @@ final class ImagesListCell: UITableViewCell {
     var date: Date? {
         didSet {
             if let date {
-                dateLabel.text = dateFormatter.string(from: date)
+                dateLabel.text = ImagesListCell.dateFormatter.string(from: date)
             } else {
                 dateLabel.text = ""
             }
@@ -112,15 +118,6 @@ final class ImagesListCell: UITableViewCell {
     
     private let dateLabelMargin: Double = 8
     private let dateLabelFontSize: Double = 13
-    
-    // MARK: - Private Properties
-    
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd MMMM yyyy"
-        formatter.locale = Locale(identifier: "ru_RU")
-        return formatter
-    } ()
     
     // MARK: - Initializers
     

@@ -7,16 +7,16 @@ struct Photo {
     let welcomeDescription: String?
     let thumbImageURL: String
     let largeImageURL: String
-    let isLiked: Bool
+    let isLiked: Bool    
 }
 
 extension Photo {
+    private static let dateFormatter = ISO8601DateFormatter()
+    
     init(from data: ImageResponseBody) {
-        let dateFormatter = ISO8601DateFormatter()
-        
         id = data.id
         size = CGSize(width: data.width, height: data.height)
-        createdAt = dateFormatter.date(from: data.createdAt)
+        createdAt = Photo.dateFormatter.date(from: data.createdAt)
         welcomeDescription = data.description
         thumbImageURL = data.thumbURL
         largeImageURL = data.fullURL
