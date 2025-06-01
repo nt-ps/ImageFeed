@@ -60,6 +60,10 @@ final class ProfileViewController: UIViewController {
     private var profileImageServiceObserver: NSObjectProtocol?
     private let imageCache = ImageCache.default
     
+    // MARK: - Alert
+    
+    private var alertPresenter: AlertPresenter?
+    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -73,6 +77,8 @@ final class ProfileViewController: UIViewController {
         view.addSubviews(profileImageView, nameLabel, loginNameLabel, bioLabel, logoutButton)
         setConstraints()
         
+        alertPresenter = AlertPresenter(delegate: self)
+        
         guard let profile = ProfileService.shared.profile else { return }
         updateProfileDetails(profile: profile)
 
@@ -82,8 +88,7 @@ final class ProfileViewController: UIViewController {
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
-                guard let self else { return }
-                self.updateProfileImage()
+                self?.updateProfileImage()
             }
         updateProfileImage()
     }
@@ -92,7 +97,18 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func logoutButtonTap() {
-        // TODO: Добавить логику выхода из аккаунта.
+        let model = AlertModel(
+            title: "Пока, пока!",
+            message: "Уверены, что хотите выйти?",
+            actionButton: AlertButton(title: AlertButtonTitle.yes) { [weak self] in
+                guard let self else { return }
+                ProfileLogoutService.shared.logout()
+                self.switchToSplashViewController()
+            },
+            cancelButton: AlertButton(title: AlertButtonTitle.no, action: nil)
+        )
+        
+        show(alert: model)
     }
     
     // MARK: - UI Updates
@@ -169,5 +185,25 @@ final class ProfileViewController: UIViewController {
         )
         profileImageView.layer.cornerRadius = profileImageSize / 2
         profileImageView.layer.masksToBounds = true
+    }
+    
+    private func show(alert model: AlertModel) {
+        alertPresenter?.show(alert: model)
+    }
+    
+    private func switchToSplashViewController() {
+        guard let window = UIApplication.shared.windows.first else {
+            assertionFailure("[\(#function)] Invalid Configuration.")
+            return
+        }
+
+        window.rootViewController = SplashViewController()
+    }
+}
+
+extension ProfileViewController: AlertPresenterDelegate {
+    func didReceiveAlert(alert: UIAlertController?) {
+        guard let alert else { return }
+        present(alert, animated: true, completion: nil)
     }
 }

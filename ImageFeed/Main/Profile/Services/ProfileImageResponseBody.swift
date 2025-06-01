@@ -23,7 +23,10 @@ struct ProfileImageResponseBody: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        let profileImageContainer = try container.nestedContainer(keyedBy: ProfileImageCodingKeys.self, forKey: .profileImage)
+        let profileImageContainer = try container.nestedContainer(
+            keyedBy: ProfileImageCodingKeys.self,
+            forKey: .profileImage
+        )
         small = try profileImageContainer.decode(String.self, forKey: .small)
         medium = try profileImageContainer.decode(String.self, forKey: .medium)
         large = try profileImageContainer.decode(String.self, forKey: .large)

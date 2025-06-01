@@ -14,11 +14,19 @@ final class AlertPresenter {
             preferredStyle: .alert
         )
         
-        let action = UIAlertAction(title: model.buttonText, style: .default) { _ in
-            guard let completion = model.completion else { return }
+        if let actionButton = model.actionButton {
+            let action = UIAlertAction(title: actionButton.title, style: .default) { _ in
+                guard let completion = actionButton.action else { return }
+                completion()
+            }
+            alert.addAction(action)
+        }
+        
+        let cancel = UIAlertAction(title: model.cancelButton.title, style: .cancel) { _ in
+            guard let completion = model.cancelButton.action else { return }
             completion()
         }
-        alert.addAction(action)
+        alert.addAction(cancel)
         
         delegate?.didReceiveAlert(alert: alert)
     }

@@ -5,9 +5,10 @@ final class TabBarController: UITabBarController {
         super.viewDidLoad()
 
         let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .ypBlack
+        appearance.stackedLayoutAppearance.selected.iconColor = .ypWhite
         self.tabBar.standardAppearance = appearance
-        self.tabBar.tintColor = .ypWhite
         
         let imagesListViewController = ImagesListViewController()
         imagesListViewController.tabBarItem = UITabBarItem(
@@ -15,7 +16,6 @@ final class TabBarController: UITabBarController {
            image: UIImage(named: "MainButtonIcon"),
            selectedImage: nil
         )
-        
         
         let profileViewController = ProfileViewController()
         profileViewController.tabBarItem = UITabBarItem(

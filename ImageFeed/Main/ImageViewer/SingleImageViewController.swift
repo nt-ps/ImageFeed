@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
     
@@ -8,8 +9,6 @@ final class SingleImageViewController: UIViewController {
         let scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.minimumZoomScale = minZoomScale
-        scrollView.maximumZoomScale = maxZoomScale
         scrollView.contentInsetAdjustmentBehavior = UIScrollView.ContentInsetAdjustmentBehavior.never
         return scrollView
     } ()
@@ -37,16 +36,6 @@ final class SingleImageViewController: UIViewController {
         return sharingButton
     } ()
     
-    // MARK: - Public Properties
-    
-    var image: UIImage? {
-        didSet {
-            if isViewLoaded {
-                setImage()
-            }
-        }
-    }
-    
     // MARK: - UI Properties
     
     private let backwardButtonIconName: String = "BackwardButtonIcon"
@@ -55,8 +44,11 @@ final class SingleImageViewController: UIViewController {
     private let sharingButtonIconName: String = "SharingButtonIcon"
     private let sharingButtonSize: Double = 50
     
-    private let minZoomScale: Double = 0.1
     private let maxZoomScale: Double = 1.25
+    
+    // MARK: - Alert
+    
+    private var alertPresenter: AlertPresenter?
     
     // MARK: - Lifecycle
     
@@ -65,13 +57,13 @@ final class SingleImageViewController: UIViewController {
         
         view.backgroundColor = .ypBlack
         
-        view.addSubviews(scrollView, backwardButton, sharingButton)
         scrollView.addSubviews(imageView)
+        view.addSubviews(scrollView, backwardButton, sharingButton)
         setConstraints()
         
         scrollView.delegate = self
         
-        setImage()
+        alertPresenter = AlertPresenter(delegate: self)
     }
     
     // MARK: - Button Actions
@@ -83,13 +75,43 @@ final class SingleImageViewController: UIViewController {
     
     @objc
     private func didTapShareButton() {
-        guard let image else { return }
+        guard let image = imageView.image else { return }
         
         let share = UIActivityViewController(activityItems: [image], applicationActivities: nil)
         present(share, animated: true, completion: nil)
     }
     
     // MARK: - UI Updates
+    
+    func setImage(from photo: Photo, placeholder: UIImage) {
+        setUserInteraction(to: false)
+        rescaleAndCenterImageInScrollView(imageSize: placeholder.size)
+        
+        guard let url = URL(string: photo.largeImageURL) else { return }
+        loadImage(url: url, placeholder: placeholder)
+    }
+    
+    private func loadImage(url: URL, placeholder: UIImage) {
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: url, placeholder: placeholder) { [weak self] result in
+            switch result{
+            case .success(let data):
+                self?.setUserInteraction(to: true)
+                self?.rescaleAndCenterImageInScrollView(imageSize: data.image.size)
+            case .failure(let error):
+                print("[\(#function)] Failed to download full image: \(error.localizedDescription).")
+                
+                let errorViewModel = ErrorViewModel(
+                    message: "Не удалось загрузить фотографию. Попробовать ещё раз?",
+                    buttonText: AlertButtonTitle.again
+                ) { [weak self] in
+                    self?.loadImage(url: url, placeholder: placeholder)
+                }
+                
+                self?.show(error: errorViewModel)
+            }
+        }
+    }
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
@@ -111,28 +133,28 @@ final class SingleImageViewController: UIViewController {
         ])
     }
     
-    private func setImage() {
-        guard let image else { return }
-        imageView.image = image
-        imageView.frame.size = image.size
-        rescaleAndCenterImageInScrollView(image: image)
-    }
-    
-    private func rescaleAndCenterImageInScrollView(image: UIImage) {
-        let minZoomScale = scrollView.minimumZoomScale
-        let maxZoomScale = scrollView.maximumZoomScale
-        
-        view.layoutIfNeeded()
-        let visibleRectSize = scrollView.bounds.size
-        let imageSize = image.size
-        
+    private func rescaleAndCenterImageInScrollView(imageSize: CGSize) {
         if imageSize.width > 0 && imageSize.height > 0 {
+            imageView.frame.size = imageSize
+            view.layoutIfNeeded()
+            let visibleRectSize = scrollView.bounds.size
             let hScale = visibleRectSize.width / imageSize.width
             let vScale = visibleRectSize.height / imageSize.height
-            let scale = min(maxZoomScale, max(minZoomScale, min(hScale, vScale)))
+            let scale = min(hScale, vScale)
             scrollView.minimumZoomScale = scale
+            scrollView.maximumZoomScale = max(scale, maxZoomScale)
             scrollView.setZoomScale(scale, animated: false)
         }
+    }
+    
+    private func setUserInteraction(to value: Bool) {
+        scrollView.isUserInteractionEnabled = value
+        sharingButton.isUserInteractionEnabled = value
+    }
+    
+    private func show(error model: ErrorViewModel) {
+        let alertModel = AlertModel(from: model)
+        alertPresenter?.show(alert: alertModel)
     }
 }
 
@@ -151,5 +173,13 @@ extension SingleImageViewController: UIScrollViewDelegate {
             bottom: verticalPadding,
             right: horizontalPadding
         )
+    }
+}
+
+
+extension SingleImageViewController: AlertPresenterDelegate {
+    func didReceiveAlert(alert: UIAlertController?) {
+        guard let alert else { return }
+        present(alert, animated: true, completion: nil)
     }
 }

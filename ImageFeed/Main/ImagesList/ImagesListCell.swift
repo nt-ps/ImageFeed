@@ -1,16 +1,17 @@
 import UIKit
+import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
     
     // MARK: - Views
     
-    lazy var cellImage: UIImageView = {
+    private lazy var cellImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = cellImageContentMode
         return imageView
     } ()
     
-    lazy var dateLabel: UILabel = {
+    private lazy var dateLabel: UILabel = {
         let dateLabel = UILabel()
         dateLabel.font = UIFont.systemFont(ofSize: dateLabelFontSize, weight: .regular)
         dateLabel.textColor = .ypWhite
@@ -20,7 +21,7 @@ final class ImagesListCell: UITableViewCell {
     
     private lazy var containerView: UIView = {
         let containerView = UIView()
-        containerView.backgroundColor = .ypWhite
+        containerView.backgroundColor = .ypWhiteA50
         containerView.layer.masksToBounds = true
         containerView.layer.cornerRadius = containerViewCornerRadius
         return containerView
@@ -33,6 +34,7 @@ final class ImagesListCell: UITableViewCell {
         likeButton.layer.shadowOpacity = 0.1
         likeButton.layer.shadowRadius = 4
         likeButton.layer.shadowOffset = CGSize(width: 0, height: 1)
+        likeButton.addTarget(self, action: #selector(self.likeButtonTap), for: .touchUpInside)
         return likeButton
     } ()
     
@@ -47,7 +49,46 @@ final class ImagesListCell: UITableViewCell {
     
     static let reuseIdentifier = "ImagesListCell"
     
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMMM yyyy"
+        return formatter
+    } ()
+    
     // MARK: - Internal Properties
+    
+    weak var delegate: ImagesListCellDelegate?
+    
+    var image: UIImage? { cellImage.image }
+    
+    var imageURL: URL? {
+        didSet {
+            guard let imageURL else { return }
+            
+            cellImage.kf.cancelDownloadTask()
+            
+            cellImage.contentMode = .center
+            cellImage.kf.indicatorType = .none
+            cellImage.kf.setImage(
+                with: imageURL,
+                placeholder: cellImagePlaceholder,
+                completionHandler: { [weak self] result in
+                    guard let self else { return }
+                    self.cellImage.contentMode = self.cellImageContentMode
+                }
+            )
+        }
+    }
+    
+    var date: Date? {
+        didSet {
+            if let date {
+                dateLabel.text = ImagesListCell.dateFormatter.string(from: date)
+            } else {
+                dateLabel.text = ""
+            }
+        }
+    }
     
     var isLiked: Bool? {
         didSet {
@@ -60,11 +101,13 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - UI Properties
     
-    private let containerViewCornerRadius: Double = 16
     static let containerViewVerticalMargin: Double = 4
     static let containerViewHorizontalMargin: Double = 16
+    private let containerViewCornerRadius: Double = 16
     
     private let cellImageMinHeight: Double = 30
+    private let cellImagePlaceholder: UIImage? = UIImage(named: "ImageStub")
+    private let cellImageContentMode: ContentMode = .scaleAspectFit
     
     private let likeButtonSize: Double = 44
     private let likeButtonActiveIcon: String = "LikeButtonIcon/Active"
@@ -84,8 +127,9 @@ final class ImagesListCell: UITableViewCell {
         backgroundColor = .clear
         selectionStyle = .none
         
-        containerView.addSubviews(cellImage, likeButton, gradient, dateLabel)
+        containerView.addSubviews(cellImage, gradient, dateLabel)
         addSubviews(containerView)
+        contentView.addSubviews(likeButton)
         setConstraints()
         
         isLiked = false
@@ -94,6 +138,20 @@ final class ImagesListCell: UITableViewCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         print("ImagesListCell.init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Overrided methods
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        cellImage.kf.cancelDownloadTask()
+    }
+    
+    // MARK: - Button Actions
+    
+    @objc
+    private func likeButtonTap() {
+        delegate?.imageListCellDidTapLike(self)
     }
     
     // MARK: - UI Updates
@@ -134,9 +192,18 @@ final class ImagesListCell: UITableViewCell {
             gradient.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             gradient.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             
-            dateLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: dateLabelMargin),
-            dateLabel.trailingAnchor.constraint(greaterThanOrEqualTo: containerView.trailingAnchor, constant: dateLabelMargin),
-            dateLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -dateLabelMargin)
+            dateLabel.leadingAnchor.constraint(
+                equalTo: containerView.leadingAnchor,
+                constant: dateLabelMargin
+            ),
+            dateLabel.trailingAnchor.constraint(
+                greaterThanOrEqualTo: containerView.trailingAnchor,
+                constant: dateLabelMargin
+            ),
+            dateLabel.bottomAnchor.constraint(
+                equalTo: containerView.bottomAnchor,
+                constant: -dateLabelMargin
+            )
         ])
     }
 }
