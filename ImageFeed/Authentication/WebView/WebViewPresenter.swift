@@ -16,7 +16,6 @@ final class WebViewPresenter: WebViewPresenterProtocol {
         
         didUpdateProgressValue(0)
         view?.load(request)
-        
     }
     
     func didUpdateProgressValue(_ newValue: Double) {

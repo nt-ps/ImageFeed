@@ -16,7 +16,7 @@ final class AuthHelper: AuthHelperProtocol {
         return URLRequest(url: url)
     }
     
-    private func authURL() -> URL? {
+    func authURL() -> URL? {
         guard var urlComponents = URLComponents(string: configuration.authURLString) else {
             print("[\(#function)] Failed to initialize URL components.")
             return nil
