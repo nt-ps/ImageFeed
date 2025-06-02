@@ -1,7 +1,11 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController & ProfileViewControllerProtocol {
+    
+    // MARK: - Internal Properties
+    
+    var presenter: ProfilePresenterProtocol?
     
     // MARK: - Views
     
@@ -55,11 +59,6 @@ final class ProfileViewController: UIViewController {
     private let logoutButtonIconName: String = "LogoutButtonIcon"
     private let logoutButtonSize: Double = 44
     
-    // MARK: - Private Properties
-    
-    private var profileImageServiceObserver: NSObjectProtocol?
-    private let imageCache = ImageCache.default
-    
     // MARK: - Alert
     
     private var alertPresenter: AlertPresenter?
@@ -69,9 +68,6 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        imageCache.clearMemoryCache()
-        imageCache.clearDiskCache()
-        
         view.backgroundColor = .ypBlack
         
         view.addSubviews(profileImageView, nameLabel, loginNameLabel, bioLabel, logoutButton)
@@ -79,39 +75,46 @@ final class ProfileViewController: UIViewController {
         
         alertPresenter = AlertPresenter(delegate: self)
         
-        guard let profile = ProfileService.shared.profile else { return }
-        updateProfileDetails(profile: profile)
-
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                self?.updateProfileImage()
-            }
-        updateProfileImage()
+        presenter?.viewDidLoad()
     }
     
     // MARK: - Button Actions
     
     @objc
     private func logoutButtonTap() {
-        let model = AlertModel(
-            title: "Пока, пока!",
-            message: "Уверены, что хотите выйти?",
-            actionButton: AlertButton(title: AlertButtonTitle.yes) { [weak self] in
-                guard let self else { return }
-                ProfileLogoutService.shared.logout()
-                self.switchToSplashViewController()
-            },
-            cancelButton: AlertButton(title: AlertButtonTitle.no, action: nil)
-        )
-        
-        show(alert: model)
+        presenter?.logout()
     }
     
     // MARK: - UI Updates
+    
+    func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        loginNameLabel.text = profile.loginName
+        bioLabel.text = profile.bio
+    }
+    
+    func updateProfileImage(url: URL) {        
+        profileImageView.kf.indicatorType = .activity
+        profileImageView.kf.setImage(
+            with: url,
+            placeholder: UIImage(named: profileImageName)
+        )
+        profileImageView.layer.cornerRadius = profileImageSize / 2
+        profileImageView.layer.masksToBounds = true
+    }
+    
+    func switchToSplashViewController() {
+        guard let window = UIApplication.shared.windows.first else {
+            assertionFailure("[\(#function)] Invalid Configuration.")
+            return
+        }
+
+        window.rootViewController = SplashViewController()
+    }
+    
+    func show(alert model: AlertModel) {
+        alertPresenter?.show(alert: model)
+    }
     
     private func setConstraints() {
         NSLayoutConstraint.activate([
@@ -164,40 +167,6 @@ final class ProfileViewController: UIViewController {
                 constant: -mainHorizontalOffset + 2
             )
         ])
-    }
-    
-    private func updateProfileDetails(profile: Profile) {
-        nameLabel.text = profile.name
-        loginNameLabel.text = profile.loginName
-        bioLabel.text = profile.bio
-    }
-    
-    private func updateProfileImage() {
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
-        
-        profileImageView.kf.indicatorType = .activity
-        profileImageView.kf.setImage(
-            with: url,
-            placeholder: UIImage(named: profileImageName)
-        )
-        profileImageView.layer.cornerRadius = profileImageSize / 2
-        profileImageView.layer.masksToBounds = true
-    }
-    
-    private func show(alert model: AlertModel) {
-        alertPresenter?.show(alert: model)
-    }
-    
-    private func switchToSplashViewController() {
-        guard let window = UIApplication.shared.windows.first else {
-            assertionFailure("[\(#function)] Invalid Configuration.")
-            return
-        }
-
-        window.rootViewController = SplashViewController()
     }
 }
 

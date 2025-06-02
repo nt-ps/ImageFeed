@@ -1,4 +1,4 @@
-struct AlertModel {    
+public struct AlertModel {    
     let title: String
     let message: String
     let actionButton: AlertButton?
