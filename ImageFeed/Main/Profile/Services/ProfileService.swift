@@ -1,15 +1,18 @@
 import Foundation
 
-final class ProfileService {
+final class ProfileService : ProfileServiceProtocol {
+    
     // MARK: - Static Properties
     
-    static let shared = ProfileService()
+    static var shared: ProfileServiceProtocol = ProfileService()
     
     // MARK: - Internal Properties
     
-    private(set) var profile: Profile?
+    var profile: Profile? { profileValue }
     
     // MARK: - Private Properties
+    
+    private var profileValue: Profile?
 
     private let urlSession = URLSession.shared
     private var task: URLSessionTask?
@@ -45,7 +48,7 @@ final class ProfileService {
                     switch result {
                     case .success(let data):
                         let profile = Profile(from: data)
-                        ProfileService.shared.profile = profile
+                        self.profileValue = profile
                         completion(.success(profile))
                     case .failure(let error):
                         completion(.failure(error))
@@ -61,7 +64,7 @@ final class ProfileService {
     }
     
     func reset() {
-        profile = nil
+        profileValue = nil
     }
     
     // MARK: - Private Methods

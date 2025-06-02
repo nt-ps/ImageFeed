@@ -1,8 +1,8 @@
 public struct AlertModel {    
-    let title: String
-    let message: String
-    let actionButton: AlertButton?
-    let cancelButton: AlertButton
+    public let title: String
+    public let message: String
+    public let actionButton: AlertButton?
+    public let cancelButton: AlertButton
 }
 
 extension AlertModel {

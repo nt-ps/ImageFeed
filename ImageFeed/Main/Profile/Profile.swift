@@ -5,7 +5,7 @@ public struct Profile {
     
     var loginName: String { "@\(username)" }
     
-    init(
+    public init(
         username: String = "username",
         name: String = "Name",
         bio: String = "Bio."

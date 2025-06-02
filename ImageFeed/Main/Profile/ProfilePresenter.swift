@@ -6,13 +6,24 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     
     private var profileImageServiceObserver: NSObjectProtocol?
     
+    private let profileService: ProfileServiceProtocol
+    private let profileImageService: ProfileImageServiceProtocol
+    
+    init (
+        profileService: ProfileServiceProtocol,
+        profileImageService: ProfileImageServiceProtocol
+    ) {
+        self.profileService = profileService
+        self.profileImageService = profileImageService
+    }
+    
     func viewDidLoad() {
-        guard let profile = ProfileService.shared.profile else { return }
+        guard let profile = profileService.profile else { return }
         view?.updateProfileDetails(profile: profile)
 
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
-                forName: ProfileImageService.didChangeNotification,
+                forName: profileImageService.didChangeNotification,
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
@@ -38,7 +49,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     
     private func updateProfileImage() {
         guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let profileImageURL = profileImageService.avatarURL,
             let url = URL(string: profileImageURL)
         else { return }
         
