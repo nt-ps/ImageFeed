@@ -1,7 +1,11 @@
 import UIKit
 import Kingfisher
 
-final class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController & ImagesListViewControllerProtocol {
+    
+    // MARK: - Internal Properties
+    
+    var presenter: ImagesListPresenterProtocol?
     
     // MARK: - Views
     
@@ -27,9 +31,6 @@ final class ImagesListViewController: UIViewController {
     
     private var photos: [Photo] = []
     
-    private let imagesListService = ImagesListService.shared
-    private var imagesListServiceObserver: NSObjectProtocol?
-    
     // MARK: - Alert
     
     private var alertPresenter: AlertPresenter?
@@ -48,33 +49,15 @@ final class ImagesListViewController: UIViewController {
         
         alertPresenter = AlertPresenter(delegate: self)
         
-        fetchNextPage()
-        
-        imagesListServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ImagesListService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                self?.updateTableViewAnimated()
-            }
+        presenter?.viewDidLoad()
     }
     
     // MARK: - UI Updates
     
-    private func setConstraints() {
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
-        ])
-    }
-    
-    private func updateTableViewAnimated() {
+    func updateTableViewAnimated(from newPhotos: [Photo]) {
         let oldCount = photos.count
-        let newCount = imagesListService.photos.count
-        photos = imagesListService.photos
+        let newCount = newPhotos.count
+        photos = newPhotos
         if oldCount != newCount {
             tableView.performBatchUpdates {
                 let indexPaths = (oldCount..<newCount).map { i in
@@ -85,31 +68,48 @@ final class ImagesListViewController: UIViewController {
         }
     }
     
-    private func show(error model: ErrorViewModel) {
+    func show(error model: ErrorViewModel) {
         let alertModel = AlertModel(from: model)
         alertPresenter?.show(alert: alertModel)
     }
     
-    // MARK: - Private Methods
+    func updatePhoto(with indexPath: IndexPath, from photo: Photo) {
+        let index = indexPath.row
+        self.photos[index] = photo
+        configCell(with: indexPath, from: photo)
+    }
     
-    private func fetchNextPage(){
-        imagesListService.fetchPhotosNextPage() { [weak self] result in
-            switch result {
-            case .success:
-                break
-            case .failure(let error):
-                print("[\(#function)] Failed to load photos page: \(error.localizedDescription).")
-                
-                let errorViewModel = ErrorViewModel(
-                    message: "Попробовать ещё раз?",
-                    buttonText: AlertButtonTitle.again
-                ) { [weak self] in
-                    self?.fetchNextPage()
-                }
-                
-                self?.show(error: errorViewModel)
-            }
-        }
+    func showProgress() {
+        UIBlockingProgressHUD.show()
+    }
+    
+    func hideProgress() {
+        UIBlockingProgressHUD.dismiss()
+    }
+    
+    private func configCell(with indexPath: IndexPath, from photo: Photo) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? ImagesListCell else { return }
+        configCell(cell, from: photo)
+    }
+    
+    private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+        let photo = photos[indexPath.row]
+        configCell(cell, from: photo)
+    }
+    
+    private func configCell(_ cell: ImagesListCell, from photo: Photo) {
+        cell.imageURL = URL(string: photo.thumbImageURL)
+        cell.date = photo.createdAt
+        cell.isLiked = photo.isLiked
+    }
+    
+    private func setConstraints() {
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+        ])
     }
 }
 
@@ -135,17 +135,8 @@ extension ImagesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row + 1 == photos.count {
-            fetchNextPage()
+            presenter?.fetchNextPage()
         }
-    }
-}
-
-extension ImagesListViewController {
-    private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        let photo = photos[indexPath.row]
-        cell.imageURL = URL(string: photo.thumbImageURL)
-        cell.date = photo.createdAt
-        cell.isLiked = photo.isLiked
     }
 }
 
@@ -179,38 +170,7 @@ extension ImagesListViewController: UITableViewDelegate {
 extension ImagesListViewController: ImagesListCellDelegate {
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
-        let index = indexPath.row
-        let photo = photos[index]
-        let newLikeValue = !photo.isLiked
-        
-        UIBlockingProgressHUD.show()
-        
-        imagesListService.changeLike(photoId: photo.id, isLiked: newLikeValue) { [weak self] result in
-            UIBlockingProgressHUD.dismiss()
-            
-            guard let self else { return }
-            
-            switch result {
-            case .success:
-                self.photos[index] = imagesListService.photos[index]
-                cell.isLiked = newLikeValue
-            case .failure(let error):
-                print("[\(#function)] Failed to change like: \(error.localizedDescription).")
-                
-                let errorViewModel = ErrorViewModel(
-                    message: "Попробовать ещё раз?",
-                    buttonText: AlertButtonTitle.again
-                ) { [weak self] in
-                    self?.imageListCellDidTapLike(cell)
-                }
-                
-                self.show(error: errorViewModel)
-            }
-        }
-    }
-    
-    private func changeLike() {
-        
+        presenter?.switchLike(with: indexPath)
     }
 }
 

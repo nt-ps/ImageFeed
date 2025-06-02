@@ -1,4 +1,4 @@
-struct ErrorViewModel {
+public struct ErrorViewModel {
     let message: String
     let buttonText: String
     let action: (() -> Void)?

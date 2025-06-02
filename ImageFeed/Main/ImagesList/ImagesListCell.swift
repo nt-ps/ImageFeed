@@ -62,8 +62,11 @@ final class ImagesListCell: UITableViewCell {
     var image: UIImage? { cellImage.image }
     
     var imageURL: URL? {
-        didSet {
-            guard let imageURL else { return }
+        didSet (oldURL) {
+            guard
+                let imageURL,
+                imageURL != oldURL
+            else { return }
             
             cellImage.kf.cancelDownloadTask()
             
@@ -81,9 +84,11 @@ final class ImagesListCell: UITableViewCell {
     }
     
     var date: Date? {
-        didSet {
+        didSet (oldDate) {
             if let date {
-                dateLabel.text = ImagesListCell.dateFormatter.string(from: date)
+                if date != oldDate {
+                    dateLabel.text = ImagesListCell.dateFormatter.string(from: date)
+                }
             } else {
                 dateLabel.text = ""
             }
@@ -91,8 +96,12 @@ final class ImagesListCell: UITableViewCell {
     }
     
     var isLiked: Bool? {
-        didSet {
-            guard let isLiked else { return }
+        didSet (oldValue) {
+            guard
+                let isLiked,
+                isLiked != oldValue
+            else { return }
+            
             let imageName = isLiked ? likeButtonActiveIcon : likeButtonNoActiveIcon
             guard let likeImage = UIImage(named: imageName) else { return }
             likeButton.setImage(likeImage, for: .normal)

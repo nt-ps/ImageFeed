@@ -1,16 +1,19 @@
 import Foundation
 
-final class ImagesListService {
+final class ImagesListService: ImagesListServiceProtocol {
+    
     // MARK: - Static Properties
     
-    static let shared = ImagesListService()
-    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
+    static var shared: ImagesListServiceProtocol = ImagesListService()
     
     // MARK: - Internal Properties
     
-    private(set) var photos: [Photo] = []
+    var didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
+    var photos: [Photo] { photosValue }
     
     // MARK: - Private Properties
+    
+    private var photosValue: [Photo] = []
     
     private let urlSession = URLSession.shared
     
@@ -59,10 +62,10 @@ final class ImagesListService {
                     switch result {
                     case .success(let data):
                         let receivedPhotos = data.map { Photo(from: $0) }
-                        self.photos.append(contentsOf: receivedPhotos)
+                        self.photosValue.append(contentsOf: receivedPhotos)
                         self.lastLoadedPage = currentPageNumber
                         NotificationCenter.default.post(
-                            name: ImagesListService.didChangeNotification,
+                            name: self.didChangeNotification,
                             object: self
                         )
                         completion(.success(self.photos.count))
@@ -100,7 +103,7 @@ final class ImagesListService {
                     case .success:
                         if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
                             let photo = self.photos[index]
-                            self.photos[index] = Photo(
+                            self.photosValue[index] = Photo(
                                 id: photo.id,
                                 size: photo.size,
                                 createdAt: photo.createdAt,
@@ -124,7 +127,7 @@ final class ImagesListService {
     }
     
     func reset() {
-        photos.removeAll()
+        photosValue.removeAll()
         lastLoadedPage = 0;
     }
     

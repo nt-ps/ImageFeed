@@ -11,11 +11,18 @@ final class TabBarController: UITabBarController {
         self.tabBar.standardAppearance = appearance
         
         let imagesListViewController = ImagesListViewController()
+        let imagesListViewPresenter = ImagesListPresenter(
+            imagesListService: ImagesListService.shared
+        )
+        
+        imagesListViewController.presenter = imagesListViewPresenter
         imagesListViewController.tabBarItem = UITabBarItem(
            title: "",
            image: UIImage(named: "MainButtonIcon"),
            selectedImage: nil
         )
+        
+        imagesListViewPresenter.view = imagesListViewController
         
         let profileViewController = ProfileViewController()
         let profilePresenter = ProfilePresenter(
