@@ -10,6 +10,5 @@ final class ProfilePresenterSpy: ProfilePresenterProtocol {
         viewDidLoadCalled = true
     }
     
-    // Не тестировал, это больше к UI.
     func logout() { }
 }

@@ -17,7 +17,6 @@ final class ProfileViewControllerSpy: ProfileViewControllerProtocol {
         updateProfileImageCalled = true
     }
     
-    // Не тестировал, это больше к UI.
     func switchToSplashViewController() { }
     
     func show(alert model: AlertModel) {

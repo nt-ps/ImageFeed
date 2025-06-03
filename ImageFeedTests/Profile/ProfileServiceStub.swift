@@ -11,5 +11,3 @@ final class ProfileServiceStub : ProfileServiceProtocol {
     func fetchProfile(_ token: String, completion: @escaping (Result<ImageFeed.Profile, any Error>) -> Void) { }
     func reset() { }
 }
-
-

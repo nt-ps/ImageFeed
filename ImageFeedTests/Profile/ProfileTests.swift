@@ -13,7 +13,21 @@ final class ProfileTests: XCTestCase {
         XCTAssertTrue(presenter.viewDidLoadCalled)
     }
     
-    func testPresenterCallsUpdateProfileData() {
+    func testPresenterCallsUpdateProfileDetails() {
+        let viewController = ProfileViewControllerSpy()
+        let presenter = ProfilePresenter(
+            profileService: ProfileServiceStub.shared,
+            profileImageService: ProfileImageServiceStub.shared
+        )
+        viewController.presenter = presenter
+        presenter.view = viewController
+        
+        presenter.viewDidLoad()
+
+        XCTAssertTrue(viewController.updateProfileDetailsCalled)
+    }
+    
+    func testPresenterCallsUpdateProfileImage() {
         let viewController = ProfileViewControllerSpy()
         let presenter = ProfilePresenter(
             profileService: ProfileServiceStub.shared,
@@ -25,7 +39,6 @@ final class ProfileTests: XCTestCase {
         presenter.viewDidLoad()
         
         XCTAssertTrue(viewController.updateProfileImageCalled)
-        XCTAssertTrue(viewController.updateProfileDetailsCalled)
     }
     
     func testPresenterCallsShow() {

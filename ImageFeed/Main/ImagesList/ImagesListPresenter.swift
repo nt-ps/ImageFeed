@@ -46,7 +46,7 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     
     func switchLike(with indexPath: IndexPath) {
         let index = indexPath.row
-        let photo = ImagesListService.shared.photos[index]
+        let photo = imagesListService.photos[index]
         let newLikeValue = !photo.isLiked
         
         view?.showProgress()
@@ -58,7 +58,7 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
             
             switch result {
             case .success:
-                let photo = ImagesListService.shared.photos[index]
+                let photo = imagesListService.photos[index]
                 self.view?.updatePhoto(with: indexPath, from: photo)
             case .failure(let error):
                 print("[\(#function)] Failed to change like: \(error.localizedDescription).")
