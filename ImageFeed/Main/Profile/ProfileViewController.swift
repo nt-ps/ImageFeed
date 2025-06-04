@@ -42,6 +42,7 @@ final class ProfileViewController: UIViewController & ProfileViewControllerProto
         let logoutButton = UIButton(type: .custom)
         logoutButton.setImage(UIImage(named: logoutButtonIconName), for: .normal)
         logoutButton.addTarget(self, action: #selector(self.logoutButtonTap), for: .touchUpInside)
+        logoutButton.accessibilityIdentifier = "LogoutButton"
         return logoutButton
     } ()
     

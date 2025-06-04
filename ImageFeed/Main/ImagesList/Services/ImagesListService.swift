@@ -41,7 +41,7 @@ final class ImagesListService: ImagesListServiceProtocol {
     func fetchPhotosNextPage(completion: @escaping (Result<Int, Error>) -> Void) {
         assert(Thread.isMainThread)
         if photoPageTask != nil {
-            completion(.failure(ImagesListServiceError.tooManyRequests))
+            // completion(.failure(ImagesListServiceError.tooManyRequests))
             return
         }
         

@@ -10,7 +10,11 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     
     // MARK: - Views
     
-    private lazy var webView: WKWebView = WKWebView()
+    private lazy var webView: WKWebView = {
+        let webView = WKWebView()
+        webView.accessibilityIdentifier = "UnsplashWebView"
+        return webView
+    }()
     
     private lazy var progressView: UIProgressView = {
         let progressView = UIProgressView()

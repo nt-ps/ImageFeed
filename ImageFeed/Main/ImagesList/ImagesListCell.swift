@@ -35,6 +35,7 @@ final class ImagesListCell: UITableViewCell {
         likeButton.layer.shadowRadius = 4
         likeButton.layer.shadowOffset = CGSize(width: 0, height: 1)
         likeButton.addTarget(self, action: #selector(self.likeButtonTap), for: .touchUpInside)
+        likeButton.accessibilityIdentifier = "LikeButton"
         return likeButton
     } ()
     
