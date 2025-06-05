@@ -1,8 +1,6 @@
 import Foundation
 
-public protocol ProfileImageServiceProtocol {
-    static var shared: ProfileImageServiceProtocol { get }
-    
+public protocol ProfileImageServiceProtocol {    
     var didChangeNotification: Notification.Name { get }
     var avatarURL: String? { get }
     

@@ -14,7 +14,7 @@ final class ImagesListTests: XCTestCase {
     }
     
     func testPresenterCallsUpdateTableView() {
-        let imagesListService = ImagesListServiceStub.shared as! ImagesListServiceStub
+        let imagesListService = ImagesListServiceStub.shared
         imagesListService.isSuccess = true
         let viewController = ImagesListViewControllerSpy()
         let presenter = ImagesListPresenter(
@@ -30,7 +30,7 @@ final class ImagesListTests: XCTestCase {
     }
     
     func testPresenterCallsShowError() {
-        let imagesListService = ImagesListServiceStub.shared as! ImagesListServiceStub
+        let imagesListService = ImagesListServiceStub.shared
         imagesListService.isSuccess = false
         let viewController = ImagesListViewControllerSpy()
         let presenter = ImagesListPresenter(
@@ -46,7 +46,7 @@ final class ImagesListTests: XCTestCase {
     }
     
     func testPresenterCallsUpdatePhoto() {
-        let imagesListService = ImagesListServiceStub.shared as! ImagesListServiceStub
+        let imagesListService = ImagesListServiceStub.shared
         imagesListService.isSuccess = true
         let viewController = ImagesListViewControllerSpy()
         let presenter = ImagesListPresenter(
@@ -64,7 +64,7 @@ final class ImagesListTests: XCTestCase {
     }
     
     func testProgressDisplayOrder() {
-        let imagesListService = ImagesListServiceStub.shared as! ImagesListServiceStub
+        let imagesListService = ImagesListServiceStub.shared 
         imagesListService.isSuccess = true
         let viewController = ImagesListViewControllerSpy()
         let presenter = ImagesListPresenter(

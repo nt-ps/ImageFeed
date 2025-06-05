@@ -2,7 +2,7 @@ import ImageFeed
 import Foundation
 
 final class ImagesListServiceStub: ImagesListServiceProtocol {
-    static var shared: ImagesListServiceProtocol = ImagesListServiceStub()
+    static var shared: ImagesListServiceStub = ImagesListServiceStub()
     
     var isSuccess = true
     var didChangeNotification = Notification.Name("ImagesListServiceStub")

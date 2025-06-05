@@ -5,7 +5,7 @@ final class ProfileImageServiceStub : ProfileImageServiceProtocol {
     var didChangeNotification = Notification.Name("ProfileImageServiceStub")
     var avatarURL: String? = "https://api.unsplash.com/"
     
-    static var shared: ProfileImageServiceProtocol = ProfileImageServiceStub()
+    static var shared: ProfileImageServiceStub = ProfileImageServiceStub()
 
     private init() {}
     

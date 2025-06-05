@@ -4,7 +4,7 @@ final class ImagesListService: ImagesListServiceProtocol {
     
     // MARK: - Static Properties
     
-    static var shared: ImagesListServiceProtocol = ImagesListService()
+    static var shared: ImagesListService = ImagesListService()
     
     // MARK: - Internal Properties
     
@@ -41,7 +41,6 @@ final class ImagesListService: ImagesListServiceProtocol {
     func fetchPhotosNextPage(completion: @escaping (Result<Int, Error>) -> Void) {
         assert(Thread.isMainThread)
         if photoPageTask != nil {
-            // completion(.failure(ImagesListServiceError.tooManyRequests))
             return
         }
         
@@ -128,7 +127,13 @@ final class ImagesListService: ImagesListServiceProtocol {
     
     func reset() {
         photosValue.removeAll()
-        lastLoadedPage = 0;
+        lastLoadedPage = 0
+        
+        photoPageTask?.cancel()
+        photoPageTask = nil
+
+        likePhotoTasks.forEach { $0.value.cancel() }
+        likePhotoTasks.removeAll()
     }
     
     // MARK: - Private Methods

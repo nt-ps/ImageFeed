@@ -57,6 +57,14 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     
     // MARK: - UI Updates
     
+    func setProgressValue(_ newValue: Float) {
+        progressView.progress = newValue
+    }
+
+    func setProgressHidden(_ isHidden: Bool) {
+        progressView.isHidden = isHidden
+    }
+    
     private func setConstraints() {
         NSLayoutConstraint.activate([
             webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -68,15 +76,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
             progressView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             progressView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
-    }
-    
-    func setProgressValue(_ newValue: Float) {
-        progressView.progress = newValue
-    }
-
-    func setProgressHidden(_ isHidden: Bool) {
-        progressView.isHidden = isHidden
-    }
+    }    
 }
 
 extension WebViewViewController: WKNavigationDelegate {

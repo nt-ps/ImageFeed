@@ -4,7 +4,7 @@ final class ProfileService : ProfileServiceProtocol {
     
     // MARK: - Static Properties
     
-    static var shared: ProfileServiceProtocol = ProfileService()
+    static var shared: ProfileService = ProfileService()
     
     // MARK: - Internal Properties
     
@@ -65,6 +65,11 @@ final class ProfileService : ProfileServiceProtocol {
     
     func reset() {
         profileValue = nil
+        
+        task?.cancel()
+        task = nil
+        
+        lastToken = nil
     }
     
     // MARK: - Private Methods

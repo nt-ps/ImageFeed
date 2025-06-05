@@ -1,8 +1,6 @@
 import Foundation
 
-public protocol ImagesListServiceProtocol {
-    static var shared: ImagesListServiceProtocol { get }
-    
+public protocol ImagesListServiceProtocol {    
     var didChangeNotification: Notification.Name { get }
     var photos: [Photo] { get }
     

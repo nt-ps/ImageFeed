@@ -4,7 +4,7 @@ final class ProfileImageService: ProfileImageServiceProtocol {
     
     // MARK: - Static Properties
     
-    static var shared: ProfileImageServiceProtocol = ProfileImageService()
+    static var shared: ProfileImageService = ProfileImageService()
     
     // MARK: - Internal Properties
     
@@ -77,6 +77,12 @@ final class ProfileImageService: ProfileImageServiceProtocol {
     
     func reset() {
         avatarURLValue = nil
+        
+        task?.cancel()
+        task = nil
+    
+        lastToken = nil
+        lastUsername = nil
     }
     
     // MARK: - Private Methods

@@ -2,7 +2,7 @@ import ImageFeed
 import Foundation
 
 final class ProfileServiceStub : ProfileServiceProtocol {
-    static var shared: ProfileServiceProtocol = ProfileServiceStub()
+    static var shared: ProfileServiceStub = ProfileServiceStub()
     
     var profile: ImageFeed.Profile? = ImageFeed.Profile()
     
