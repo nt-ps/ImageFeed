@@ -1,18 +1,20 @@
 import Foundation
 
-final class ProfileImageService {
+final class ProfileImageService: ProfileImageServiceProtocol {
     
     // MARK: - Static Properties
     
-    static let shared = ProfileImageService()
-    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    static var shared: ProfileImageService = ProfileImageService()
     
     // MARK: - Internal Properties
     
-    private(set) var avatarURL: String?
+    var didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    var avatarURL: String? { avatarURLValue }
     
     // MARK: - Private Properties
 
+    private var avatarURLValue: String?
+    
     private let urlSession = URLSession.shared
     private var task: URLSessionTask?
     private var lastToken: String?
@@ -52,9 +54,9 @@ final class ProfileImageService {
                     switch result {
                     case .success(let data):
                         let avatarURL = data.small
-                        ProfileImageService.shared.avatarURL = avatarURL
+                        self.avatarURLValue = avatarURL
                         NotificationCenter.default.post(
-                            name: ProfileImageService.didChangeNotification,
+                            name: self.didChangeNotification,
                             object: self,
                             userInfo: ["URL": avatarURL]
                         )
@@ -74,7 +76,13 @@ final class ProfileImageService {
     }
     
     func reset() {
-        avatarURL = nil
+        avatarURLValue = nil
+        
+        task?.cancel()
+        task = nil
+    
+        lastToken = nil
+        lastUsername = nil
     }
     
     // MARK: - Private Methods
