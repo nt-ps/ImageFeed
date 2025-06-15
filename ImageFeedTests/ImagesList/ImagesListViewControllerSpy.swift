@@ -1,4 +1,4 @@
-import ImageFeed
+@testable import ImageFeed
 import Foundation
 
 final class ImagesListViewControllerSpy: ImagesListViewControllerProtocol {
@@ -9,7 +9,7 @@ final class ImagesListViewControllerSpy: ImagesListViewControllerProtocol {
     var alertMessage = ""
     var progressDisplayOrder: [String] = []
     
-    func updateTableViewAnimated(from newPhotos: [ImageFeed.Photo]) {
+    func updateTableViewAnimated(from newPhotos: [Photo]) {
         updateTableViewAnimatedCalled = true
     }
     
@@ -17,7 +17,7 @@ final class ImagesListViewControllerSpy: ImagesListViewControllerProtocol {
         alertMessage = model.message
     }
     
-    func updatePhoto(with indexPath: IndexPath, from photo: ImageFeed.Photo) {
+    func updatePhoto(with indexPath: IndexPath, from photo: Photo) {
         updatePhotoCalled = true
     }
     

@@ -1,7 +1,7 @@
-public struct ErrorViewModel {
-    public let message: String
-    public let buttonText: String
-    public let action: (() -> Void)?
+struct ErrorViewModel {
+    let message: String
+    let buttonText: String
+    let action: (() -> Void)?
     
     init(
         message: String,

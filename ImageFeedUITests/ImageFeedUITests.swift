@@ -15,9 +15,9 @@ final class ImageFeedUITests: XCTestCase {
     }
     
     func testAuth() throws {
-        app.buttons["Authenticate"].tap()
+        app.buttons[Identifiers.authLoginButton].tap()
             
-        let webView = app.webViews["UnsplashWebView"]
+        let webView = app.webViews[Identifiers.webView]
         XCTAssertTrue(webView.waitForExistence(timeout: 10))
 
         let loginTextField = webView.descendants(matching: .textField).element
@@ -50,11 +50,11 @@ final class ImageFeedUITests: XCTestCase {
         
         let cellToLike = tablesQuery.children(matching: .cell).element(boundBy: 1)
         
-        cellToLike.buttons["LikeButton"].tap()
+        cellToLike.buttons[Identifiers.imagesListLikeButton].tap()
         
         sleep(2)
         
-        cellToLike.buttons["LikeButton"].tap()
+        cellToLike.buttons[Identifiers.imagesListLikeButton].tap()
         
         sleep(2)
         
@@ -66,7 +66,7 @@ final class ImageFeedUITests: XCTestCase {
         image.pinch(withScale: 3, velocity: 1)
         image.pinch(withScale: 0.5, velocity: -1)
         
-        let backButton = app.buttons["BackwardButton"]
+        let backButton = app.buttons[Identifiers.imageBackwardButton]
         backButton.tap()
     }
     
@@ -76,7 +76,7 @@ final class ImageFeedUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts[fullname].exists)
         XCTAssertTrue(app.staticTexts[username].exists)
         
-        app.buttons["LogoutButton"].tap()
+        app.buttons[Identifiers.profileLogoutButtom].tap()
         
         app.alerts["Пока, пока!"].scrollViews.otherElements.buttons["Да"].tap()
     }

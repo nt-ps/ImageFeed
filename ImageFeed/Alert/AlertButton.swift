@@ -1,4 +1,4 @@
-public struct AlertButton {
+struct AlertButton {
     let title: String
     let action: (() -> Void)?
 }

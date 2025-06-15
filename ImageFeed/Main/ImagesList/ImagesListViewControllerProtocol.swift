@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol ImagesListViewControllerProtocol: AnyObject {
+protocol ImagesListViewControllerProtocol: AnyObject {
     var presenter: ImagesListPresenterProtocol? { get set }
     
     func updateTableViewAnimated(from newPhotos: [Photo])

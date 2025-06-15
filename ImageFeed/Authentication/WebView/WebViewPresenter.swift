@@ -9,7 +9,7 @@ final class WebViewPresenter: WebViewPresenterProtocol {
     }
     
     func viewDidLoad() {        
-        guard let request = authHelper.authRequest() else {
+        guard let request = authHelper.authRequest else {
             print("[\(#function)] Failed to get URL request.")
             return
         }
@@ -31,6 +31,6 @@ final class WebViewPresenter: WebViewPresenterProtocol {
     }
     
     func code(from url: URL) -> String? {
-        authHelper.code(from: url)
+        authHelper.getCode(from: url)
     }
 }

@@ -1,11 +1,11 @@
-public struct Profile {
+struct Profile {
     let username: String
     let name: String
     let bio: String
     
     var loginName: String { "@\(username)" }
     
-    public init(
+    init(
         username: String = "username",
         name: String = "Name",
         bio: String = "Bio."

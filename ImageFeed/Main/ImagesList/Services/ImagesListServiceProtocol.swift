@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol ImagesListServiceProtocol {    
+protocol ImagesListServiceProtocol {    
     var didChangeNotification: Notification.Name { get }
     var photos: [Photo] { get }
     

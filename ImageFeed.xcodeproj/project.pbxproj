@@ -36,24 +36,23 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		3A06293E2D92BA640037B56A /* Exceptions for "ImageFeed" folder in "ImageFeed" target */ = {
+		3AF3E1C62DFEFCB20044A2F5 /* Exceptions for "ImageFeed" folder in "ImageFeed" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
 			target = 3A06292B2D92BA630037B56A /* ImageFeed */;
 		};
+		3AF3E24D2DFEFDDB0044A2F5 /* Exceptions for "ImageFeed" folder in "ImageFeedUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Identifiers.swift,
+			);
+			target = 3A7074BC2DF085630057F8B5 /* ImageFeedUITests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		3A06292E2D92BA630037B56A /* ImageFeed */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				3A06293E2D92BA640037B56A /* Exceptions for "ImageFeed" folder in "ImageFeed" target */,
-			);
-			path = ImageFeed;
-			sourceTree = "<group>";
-		};
 		3A7074BE2DF085640057F8B5 /* ImageFeedUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ImageFeedUITests;
@@ -62,6 +61,15 @@
 		3A9B5FB82DECAD2400F51EA3 /* ImageFeedTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ImageFeedTests;
+			sourceTree = "<group>";
+		};
+		3AF3E1362DFEFAD10044A2F5 /* ImageFeed */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3AF3E1C62DFEFCB20044A2F5 /* Exceptions for "ImageFeed" folder in "ImageFeed" target */,
+				3AF3E24D2DFEFDDB0044A2F5 /* Exceptions for "ImageFeed" folder in "ImageFeedUITests" target */,
+			);
+			path = ImageFeed;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -97,7 +105,7 @@
 		3A0629232D92BA630037B56A = {
 			isa = PBXGroup;
 			children = (
-				3A06292E2D92BA630037B56A /* ImageFeed */,
+				3AF3E1362DFEFAD10044A2F5 /* ImageFeed */,
 				3A9B5FB82DECAD2400F51EA3 /* ImageFeedTests */,
 				3A7074BE2DF085640057F8B5 /* ImageFeedUITests */,
 				3A06292D2D92BA630037B56A /* Products */,
@@ -130,7 +138,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				3A06292E2D92BA630037B56A /* ImageFeed */,
+				3AF3E1362DFEFAD10044A2F5 /* ImageFeed */,
 			);
 			name = ImageFeed;
 			packageProductDependencies = (

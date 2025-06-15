@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol ProfileViewControllerProtocol: AnyObject {
+protocol ProfileViewControllerProtocol: AnyObject {
     var presenter: ProfilePresenterProtocol? { get set }
     
     func updateProfileDetails(profile: Profile)

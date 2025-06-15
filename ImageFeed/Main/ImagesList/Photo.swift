@@ -1,7 +1,7 @@
 import Foundation
 import CoreGraphics
 
-public struct Photo {
+struct Photo {
     let id: String
     let size: CGSize
     let createdAt: Date?
@@ -10,7 +10,7 @@ public struct Photo {
     let largeImageURL: String
     let isLiked: Bool
     
-    public init(
+    init(
         id: String = "",
         size: CGSize = CGSize.zero,
         createdAt: Date? = nil,
