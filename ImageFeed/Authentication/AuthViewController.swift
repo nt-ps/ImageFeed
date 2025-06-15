@@ -21,6 +21,7 @@ final class AuthViewController: UIViewController {
         loginButton.setTitleColor(.ypBlack, for: .normal)
         loginButton.titleLabel?.font = UIFont.systemFont(ofSize: loginButtonFontSize, weight: .bold)
         loginButton.addTarget(self, action: #selector(self.loginButtonTap), for: .touchUpInside)
+        loginButton.accessibilityIdentifier = Identifiers.authLoginButton
         return loginButton
     } ()
     
@@ -98,10 +99,17 @@ final class AuthViewController: UIViewController {
     
     @objc
     private func loginButtonTap() {
-        let webViewController = WebViewViewController()
-        webViewController.delegate = self
-        webViewController.modalPresentationStyle = .fullScreen
-        navigationController?.pushViewController(webViewController, animated: true)
+        let authHelper = AuthHelper()
+        let webViewPresenter = WebViewPresenter(authHelper: authHelper)
+        let webViewViewController = WebViewViewController()
+        
+        webViewPresenter.view = webViewViewController
+        
+        webViewViewController.presenter = webViewPresenter
+        webViewViewController.delegate = self
+        webViewViewController.modalPresentationStyle = .fullScreen
+        
+        navigationController?.pushViewController(webViewViewController, animated: true)
     }
 }
 

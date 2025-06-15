@@ -31,4 +31,3 @@ final class ProfileLogoutService {
         OAuth2TokenStorage.remove()
     }
 }
-    

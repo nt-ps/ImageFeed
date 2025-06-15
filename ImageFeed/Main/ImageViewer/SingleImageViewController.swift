@@ -23,6 +23,7 @@ final class SingleImageViewController: UIViewController {
         let backwardButton = UIButton(type: .custom)
         backwardButton.setImage(UIImage(named: backwardButtonIconName), for: .normal)
         backwardButton.addTarget(self, action: #selector(self.didTapBackButton), for: .touchUpInside)
+        backwardButton.accessibilityIdentifier = Identifiers.imageBackwardButton
         return backwardButton
     } ()
     

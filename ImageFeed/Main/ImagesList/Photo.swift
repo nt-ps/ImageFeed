@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 
 struct Photo {
     let id: String
@@ -7,7 +8,25 @@ struct Photo {
     let welcomeDescription: String?
     let thumbImageURL: String
     let largeImageURL: String
-    let isLiked: Bool    
+    let isLiked: Bool
+    
+    init(
+        id: String = "",
+        size: CGSize = CGSize.zero,
+        createdAt: Date? = nil,
+        welcomeDescription: String? = nil,
+        thumbImageURL: String = "",
+        largeImageURL: String = "",
+        isLiked: Bool = false
+    ) {
+        self.id = id
+        self.size = size
+        self.createdAt = createdAt
+        self.welcomeDescription = welcomeDescription
+        self.thumbImageURL = thumbImageURL
+        self.largeImageURL = largeImageURL
+        self.isLiked = isLiked
+    }
 }
 
 extension Photo {
